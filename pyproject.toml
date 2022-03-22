@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "project"
+version = "0.1.0"
+description = "Service for managing projects and project related resources."
+authors = ["Indoc Research"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+common = "0.0.19"
+fastapi = "0.75.0"
+fastapi-sqlalchemy = "0.2.1"
+opentelemetry-api = "1.10.0"
+opentelemetry-exporter-jaeger = "1.10.0"
+opentelemetry-instrumentation = "0.29b0"
+opentelemetry-instrumentation-fastapi = "0.29b0"
+psycopg2-binary = "2.9.3"
+pydantic = "1.8.2"
+uvicorn = "0.17.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "7.1.1"
+pytest-cov = "3.0.0"
+faker = "13.3.2"
+httpx = "0.21.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "pilot"
+url = "https://git.indocresearch.org/api/v4/groups/pilot/-/packages/pypi/simple"
+default = true
