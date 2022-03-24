@@ -22,11 +22,12 @@ services:
     ports:
       - "127.0.0.1:6432:5432"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-project}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-pilot5kX8}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./migrations/scripts/:/docker-entrypoint-initdb.d/
 
 volumes:
   postgres_data:

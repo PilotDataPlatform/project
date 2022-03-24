@@ -1,4 +1,4 @@
-FROM python:3.9.9-buster
+FROM python:3.9.11-buster
 
 ARG REGISTRY_USERNAME
 ARG REGISTRY_PASSWORD

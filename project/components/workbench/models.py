@@ -1,11 +1,12 @@
 from uuid import uuid4
 
-from components.db_model import DBModel
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
+
+from project.components.db_model import DBModel
 
 
 class Workbench(DBModel):

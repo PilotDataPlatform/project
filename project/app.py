@@ -1,10 +1,5 @@
 from functools import partial
 
-from components.project import project_router
-from components.resource_request import resource_request_router
-from components.workbench import workbench_router
-from config import Settings
-from config import get_settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.requests import Request
@@ -17,6 +12,12 @@ from opentelemetry.sdk.resources import SERVICE_NAME
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+from project.components.project import project_router
+from project.components.resource_request import resource_request_router
+from project.components.workbench import workbench_router
+from project.config import Settings
+from project.config import get_settings
 
 
 def create_app() -> FastAPI:
