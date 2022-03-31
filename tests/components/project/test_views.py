@@ -1,4 +1,4 @@
-class TestProject:
+class TestProjectViews:
     async def test_list_projects1(self, client):
         response = await client.get('/v1/projects/')
 

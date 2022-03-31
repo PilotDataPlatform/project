@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
-from fastapi_sqlalchemy import DBSessionMiddleware
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -13,6 +12,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
+from project.components.health import health_router
 from project.components.project import project_router
 from project.components.resource_request import resource_request_router
 from project.components.workbench import workbench_router
@@ -44,6 +44,7 @@ def create_app() -> FastAPI:
 def setup_routers(app: FastAPI) -> None:
     """Configure the application routers."""
 
+    app.include_router(health_router, prefix='/v1')
     app.include_router(project_router, prefix='/v1')
     app.include_router(resource_request_router, prefix='/v1')
     app.include_router(workbench_router, prefix='/v1')
@@ -59,7 +60,6 @@ def setup_middlewares(app: FastAPI, settings: Settings) -> None:
         allow_methods=['*'],
         allow_headers=['*'],
     )
-    app.add_middleware(DBSessionMiddleware, db_url=settings.RDS_DB_URI)
 
 
 def setup_dependencies(app: FastAPI, settings: Settings) -> None:
@@ -71,8 +71,6 @@ def setup_dependencies(app: FastAPI, settings: Settings) -> None:
 async def startup_event(settings: Settings) -> None:
     """Initialise dependencies at the application startup event."""
 
-    # await get_redis(settings=settings)
-
 
 def setup_exception_handlers(app: FastAPI) -> None:
     """Configure the application exception handlers."""
@@ -83,7 +81,15 @@ def setup_exception_handlers(app: FastAPI) -> None:
 def global_exception_handler(request: Request, exception: Exception) -> JSONResponse:
     """Return the default response structure for all unhandled exceptions."""
 
-    return JSONResponse(status_code=500, content={'error_msg': 'Internal Server Error'})
+    return JSONResponse(
+        status_code=500,
+        content={
+            'error': {
+                'code': 'global.unhandled_exception',
+                'details': 'Unexpected Internal Server Error',
+            }
+        },
+    )
 
 
 def setup_tracing(app: FastAPI, settings: Settings) -> None:
