@@ -5,25 +5,25 @@ router = APIRouter(prefix='/workbenches', tags=['Workbenches'])
 
 
 @router.get('/', summary='List all workbenches.')
-async def list_workbenches():
+async def list_workbenches() -> JSONResponse:
     return JSONResponse(content={'message': 'Not Implemented'}, status_code=501)
 
 
 @router.get('/{workbench_id}', summary='Get a workbench by id.')
-async def get_workbench(workbench_id: str):
+async def get_workbench(workbench_id: str) -> JSONResponse:
     return JSONResponse(content={'message': 'Not Implemented'}, status_code=501)
 
 
 @router.post('/', summary='Create a new workbench.')
-async def create_workbench():
+async def create_workbench() -> JSONResponse:
     return JSONResponse(content={'message': 'Not Implemented'}, status_code=501)
 
 
 @router.patch('/{workbench_id}', summary='Update a workbench.')
-async def update_workbench(workbench_id: str):
+async def update_workbench(workbench_id: str) -> JSONResponse:
     return JSONResponse(content={'message': 'Not Implemented'}, status_code=501)
 
 
 @router.delete('/{workbench_id}', summary='Delete a workbench.')
-async def delete_workbench(workbench_id: str):
+async def delete_workbench(workbench_id: str) -> JSONResponse:
     return JSONResponse(content={'message': 'Not Implemented'}, status_code=501)

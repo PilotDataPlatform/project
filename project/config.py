@@ -1,8 +1,9 @@
 from functools import lru_cache
+from typing import Any
+from urllib.parse import urlparse
 
 from pydantic import BaseSettings
 from pydantic import Extra
-from pydantic import PostgresDsn
 
 
 class Settings(BaseSettings):
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     HOST: str = '127.0.0.1'
     PORT: int = 5064
 
-    RDS_DB_URI: PostgresDsn = 'postgresql://postgres:pilot5kX8@127.0.0.1:6432/project'
+    RDS_DB_URI: str = 'postgresql://postgres:pilot5kX8@127.0.0.1:6432/project'
 
     OPEN_TELEMETRY_ENABLED: bool = False
     OPEN_TELEMETRY_HOST: str = '127.0.0.1'
@@ -23,6 +24,11 @@ class Settings(BaseSettings):
         env_file = '.env'
         env_file_encoding = 'utf-8'
         extra = Extra.ignore
+
+    def __init__(self, *args: Any, **kwds: Any) -> None:
+        super().__init__(*args, **kwds)
+
+        self.RDS_DB_URI = self.RDS_DB_URI.replace(f'{urlparse(self.RDS_DB_URI).scheme}://', 'postgresql+asyncpg://', 1)
 
 
 @lru_cache(1)

@@ -1,4 +1,4 @@
-class TestWorkbench:
+class TestWorkbenchViews:
     async def test_list_workbenches(self, client):
         response = await client.get('/v1/workbenches/')
 

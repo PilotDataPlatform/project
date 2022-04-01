@@ -1,4 +1,4 @@
-class TestResourceRequest:
+class TestResourceRequestViews:
     async def test_list_resource_requests(self, client):
         response = await client.get('/v1/resource-requests/')
 

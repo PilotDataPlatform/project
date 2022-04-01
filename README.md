@@ -9,7 +9,7 @@ Service for managing projects and project related resources.
 ### Installation
 
 1. Install [Poetry](https://python-poetry.org/docs/#installation).
-2. Configure access to internal package registry.
+2. Configure access to internal package registry (PyPI).
 
        poetry config http-basic.pilot ${REGISTRY_USERNAME} ${REGISTRY_PASSWORD}
 
