@@ -15,7 +15,7 @@ class ResourceRequest(DBModel):
 
     __tablename__ = 'resource_requests'
 
-    id = Column(UUID(as_uuid=True), unique=True, primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     project_id = Column(UUID(as_uuid=True), ForeignKey('projects.id'), nullable=False)
     requested_by_user_id = Column(String(length=256), nullable=False)
     requested_for = Column(String(length=256), nullable=False)
