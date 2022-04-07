@@ -14,7 +14,7 @@ class Workbench(DBModel):
 
     __tablename__ = 'workbenches'
 
-    id = Column(UUID(as_uuid=True), unique=True, primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     project_id = Column(UUID(as_uuid=True), ForeignKey('projects.id'), nullable=False)
     resource = Column(String(length=256), nullable=False)
     deployed_at = Column(DateTime(timezone=True), nullable=True)

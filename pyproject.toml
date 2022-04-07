@@ -20,6 +20,7 @@ sqlalchemy = "1.4.32"
 uvicorn = "0.17.6"
 
 [tool.poetry.dev-dependencies]
+alembic = "1.7.7"
 faker = "13.3.2"
 httpx = "0.21.3"
 pytest = "7.1.1"

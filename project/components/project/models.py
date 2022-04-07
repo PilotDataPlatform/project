@@ -17,7 +17,7 @@ class Project(DBModel):
 
     __tablename__ = 'projects'
 
-    id = Column(UUID(as_uuid=True), unique=True, primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     code = Column(String(length=256), unique=True, index=True, nullable=False)
     name = Column(String(length=256), nullable=False)
     description = Column(String(length=256), nullable=False)
