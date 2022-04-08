@@ -1,5 +1,5 @@
 class TestProjectViews:
-    async def test_list_projects1(self, client):
+    async def test_list_projects(self, client):
         response = await client.get('/v1/projects/')
 
         assert response.status_code == 501

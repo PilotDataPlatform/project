@@ -3,7 +3,6 @@ from asyncio import AbstractEventLoop
 from contextlib import AbstractContextManager
 from typing import Any
 from typing import Callable
-from typing import Dict
 
 import pytest
 from fastapi import FastAPI
@@ -22,7 +21,7 @@ class OverrideDependencies(AbstractContextManager):
         self.stashed_dependencies = {}
         self.dependencies_to_override = {}
 
-    def __call__(self, dependencies: Dict[Callable[..., Any], Callable[..., Any]]) -> 'OverrideDependencies':
+    def __call__(self, dependencies: dict[Callable[..., Any], Callable[..., Any]]) -> 'OverrideDependencies':
         self.dependencies_to_override = dependencies
         return self
 
@@ -51,8 +50,8 @@ def event_loop() -> AbstractEventLoop:
 
 
 @pytest.fixture
-def settings(db_uri) -> Settings:
-    settings = Settings(RDS_DB_URI=db_uri)
+def settings(database_uri) -> Settings:
+    settings = Settings(RDS_DB_URI=database_uri)
     yield settings
 
 

@@ -18,7 +18,7 @@ class GetDBEngine:
         """Return an instance of AsyncEngine class."""
 
         if not self.instance:
-            self.instance = create_async_engine(settings.RDS_DB_URI)
+            self.instance = create_async_engine(settings.RDS_DB_URI, echo=settings.RDS_ECHO_SQL_QUERIES)
         return self.instance
 
 
