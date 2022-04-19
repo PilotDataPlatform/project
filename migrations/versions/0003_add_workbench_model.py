@@ -20,9 +20,9 @@ def upgrade():
         'workbenches',
         sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('project_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('resource', sa.String(length=256), nullable=False),
-        sa.Column('deployed_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('deployed_by_user_id', sa.String(length=256), nullable=False),
+        sa.Column('resource', sa.VARCHAR(length=256), nullable=False),
+        sa.Column('deployed_at', postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column('deployed_by_user_id', sa.VARCHAR(length=256), nullable=False),
         sa.ForeignKeyConstraint(
             ['project_id'],
             ['project.projects.id'],

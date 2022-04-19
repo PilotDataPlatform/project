@@ -12,6 +12,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
+from project.components.exceptions import ServiceException
+from project.components.exceptions import UnhandledException
 from project.components.health import health_router
 from project.components.project import project_router
 from project.components.resource_request import resource_request_router
@@ -75,21 +77,20 @@ async def startup_event(settings: Settings) -> None:
 def setup_exception_handlers(app: FastAPI) -> None:
     """Configure the application exception handlers."""
 
-    app.add_exception_handler(Exception, global_exception_handler)
+    app.add_exception_handler(ServiceException, service_exception_handler)
+    app.add_exception_handler(Exception, unexpected_exception_handler)
 
 
-def global_exception_handler(request: Request, exception: Exception) -> JSONResponse:
-    """Return the default response structure for all unhandled exceptions."""
+def service_exception_handler(request: Request, exception: ServiceException) -> JSONResponse:
+    """Return the default response structure for service exceptions."""
 
-    return JSONResponse(
-        status_code=500,
-        content={
-            'error': {
-                'code': 'global.unhandled_exception',
-                'details': 'Unexpected Internal Server Error',
-            }
-        },
-    )
+    return JSONResponse(status_code=exception.status, content={'error': exception.dict()})
+
+
+def unexpected_exception_handler(request: Request, exception: Exception) -> JSONResponse:
+    """Return the default unhandled exception response structure for all unexpected exceptions."""
+
+    return service_exception_handler(request, UnhandledException())
 
 
 def setup_tracing(app: FastAPI, settings: Settings) -> None:

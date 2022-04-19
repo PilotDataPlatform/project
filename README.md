@@ -2,11 +2,20 @@
 
 Service for managing projects and project related resources.
 
-### Prerequisites
+### Start
 
-- [Poetry](https://python-poetry.org/) dependency manager.
+1. Install [Docker](https://www.docker.com/get-started/).
+2. Export environment variables with credentials to internal package registry (PyPI).
 
-### Installation
+       export REGISTRY_USERNAME=... REGISTRY_PASSWORD=...
+
+3. Start container with project application
+
+       docker compose up
+
+4. Visit http://127.0.0.1:5064/v1/api-doc for API documentation.
+
+### Development
 
 1. Install [Poetry](https://python-poetry.org/docs/#installation).
 2. Configure access to internal package registry (PyPI).
@@ -20,4 +29,8 @@ Service for managing projects and project related resources.
 4. Add environment variables into `.env`.
 5. Run application.
 
-       poetry run python project/start.py
+       poetry run python -m project
+
+6. Generate migration (based on comparison of database to defined models).
+
+       docker compose run --rm alembic revision --autogenerate -m "Migration message" --rev-id 0002 --depends-on 0001

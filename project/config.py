@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     PORT: int = 5064
 
     RDS_DB_URI: str = 'postgresql://postgres:pilot5kX8@127.0.0.1:6432/project'
+    RDS_ECHO_SQL_QUERIES: bool = False
 
     OPEN_TELEMETRY_ENABLED: bool = False
     OPEN_TELEMETRY_HOST: str = '127.0.0.1'

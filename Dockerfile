@@ -1,4 +1,4 @@
-FROM python:3.9.11-buster
+FROM python:3.9.11-buster AS production-environment
 
 ARG REGISTRY_USERNAME
 ARG REGISTRY_PASSWORD
@@ -6,7 +6,7 @@ ARG REGISTRY_PASSWORD
 ENV PYTHONUNBUFFERED=true \
     PYTHONDONTWRITEBYTECODE=true \
     PYTHONIOENCODING=UTF-8 \
-    POETRY_VERSION=1.1.12 \
+    POETRY_VERSION=1.1.13 \
     POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_CREATE=false
 
@@ -14,7 +14,6 @@ ENV PATH="${POETRY_HOME}/bin:${PATH}"
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
-        curl \
         build-essential
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
@@ -27,4 +26,23 @@ COPY poetry.lock pyproject.toml ./
 
 RUN poetry install --no-dev --no-root --no-interaction
 
+
+FROM production-environment AS project-image
+
 COPY project ./project
+
+ENTRYPOINT ["python3", "-m", "project"]
+
+
+FROM production-environment AS development-environment
+
+RUN poetry install --no-root --no-interaction
+
+
+FROM development-environment AS alembic-image
+
+ENV ALEMBIC_CONFIG=migrations/alembic.ini
+
+ENTRYPOINT ["python3", "-m", "alembic"]
+
+CMD ["upgrade", "head"]
