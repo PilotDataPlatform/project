@@ -2,16 +2,24 @@ from typing import Any
 from typing import Union
 from uuid import UUID
 
+from sqlalchemy import delete
+from sqlalchemy import func
+from sqlalchemy import insert
+from sqlalchemy import update
 from sqlalchemy.engine import CursorResult
 from sqlalchemy.engine import Result
 from sqlalchemy.engine import ScalarResult
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from sqlalchemy.sql import Executable
 
 from project.components.db_model import DBModel
 from project.components.exceptions import AlreadyExists
 from project.components.exceptions import NotFound
+from project.components.pagination import Page
+from project.components.pagination import Pagination
+from project.components.schemas import BaseSchema
 
 
 class CRUD:
@@ -49,7 +57,7 @@ class CRUD:
 
         return await self.session.scalars(statement, **kwds)
 
-    async def create_one(self, statement: Executable) -> Union[UUID, str]:
+    async def _create_one(self, statement: Executable) -> Union[UUID, str]:
         """Execute a statement to create one entry."""
 
         try:
@@ -59,7 +67,7 @@ class CRUD:
 
         return result.inserted_primary_key.id
 
-    async def retrieve_one(self, statement: Executable) -> DBModel:
+    async def _retrieve_one(self, statement: Executable) -> DBModel:
         """Execute a statement to retrieve one entry."""
 
         result = await self.scalars(statement)
@@ -70,7 +78,7 @@ class CRUD:
 
         return instance
 
-    async def retrieve_many(self, statement: Executable) -> list[DBModel]:
+    async def _retrieve_many(self, statement: Executable) -> list[DBModel]:
         """Execute a statement to retrieve multiple entries."""
 
         result = await self.scalars(statement)
@@ -78,7 +86,7 @@ class CRUD:
 
         return instances
 
-    async def update_one(self, statement: Executable) -> None:
+    async def _update_one(self, statement: Executable) -> None:
         """Execute a statement to update one entry."""
 
         result = await self.execute(statement)
@@ -86,10 +94,66 @@ class CRUD:
         if result.rowcount == 0:
             raise NotFound()
 
-    async def delete_one(self, statement: Executable) -> None:
+    async def _delete_one(self, statement: Executable) -> None:
         """Execute a statement to delete one entry."""
 
         result = await self.execute(statement)
 
         if result.rowcount == 0:
             raise NotFound()
+
+    async def create(self, entry_create: BaseSchema) -> DBModel:
+        """Create a new entry."""
+
+        values = entry_create.dict()
+        statement = insert(self.model).values(**values)
+        entry_id = await self._create_one(statement)
+
+        entry = await self.retrieve_by_id(entry_id)
+
+        return entry
+
+    async def retrieve_by_id(self, id_: UUID) -> DBModel:
+        """Get an existing entry by id (primary key)."""
+
+        statement = select(self.model).where(self.model.id == id_)
+        entry = await self._retrieve_one(statement)
+
+        return entry
+
+    async def list(self) -> list[DBModel]:
+        """Get all existing entries."""
+
+        statement = select(self.model)
+        entries = await self._retrieve_many(statement)
+
+        return entries
+
+    async def paginate(self, pagination: Pagination) -> Page:
+        """Get all existing entries with pagination support."""
+
+        statement = select(func.count()).select_from(self.model)
+        count = await self._retrieve_one(statement)
+
+        statement = select(self.model).limit(pagination.limit).offset(pagination.offset)
+        entries = await self._retrieve_many(statement)
+
+        return Page(pagination=pagination, count=count, entries=entries)
+
+    async def update(self, id_: UUID, entry_update: BaseSchema) -> DBModel:
+        """Update an existing entry attributes."""
+
+        values = entry_update.dict(exclude_unset=True, exclude_defaults=True)
+        statement = update(self.model).where(self.model.id == id_).values(**values)
+        await self._update_one(statement)
+
+        entry = await self.retrieve_by_id(id_)
+
+        return entry
+
+    async def delete(self, id_: UUID) -> None:
+        """Remove an existing entry."""
+
+        statement = delete(self.model).where(self.model.id == id_)
+
+        await self._delete_one(statement)

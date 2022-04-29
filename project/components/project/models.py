@@ -21,7 +21,7 @@ class Project(DBModel):
     code = Column(VARCHAR(length=32), unique=True, index=True, nullable=False)
     name = Column(VARCHAR(length=256), nullable=False)
     description = Column(VARCHAR(length=256), nullable=False)
-    image_url = Column(VARCHAR(length=2048), nullable=False)
+    image_url = Column(VARCHAR(length=2083), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), default=datetime.utcnow, nullable=False)
     updated_at = Column(TIMESTAMP(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     tags = Column(ARRAY(VARCHAR(256)), default=[], nullable=False)

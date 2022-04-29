@@ -11,6 +11,7 @@ from httpx import AsyncClient
 from project.app import create_app
 from project.config import Settings
 from project.config import get_settings
+from project.dependencies import get_db_session
 
 
 class OverrideDependencies(AbstractContextManager):
@@ -49,16 +50,17 @@ def event_loop() -> AbstractEventLoop:
     loop.close()
 
 
-@pytest.fixture
-def settings(database_uri) -> Settings:
-    settings = Settings(RDS_DB_URI=database_uri)
+@pytest.fixture(scope='session')
+def settings(db_uri) -> Settings:
+    settings = Settings(RDS_DB_URI=db_uri)
     yield settings
 
 
 @pytest.fixture
-def app(event_loop, settings) -> FastAPI:
+def app(event_loop, settings, db_session) -> FastAPI:
     app = create_app()
     app.dependency_overrides[get_settings] = lambda: settings
+    app.dependency_overrides[get_db_session] = lambda: db_session
     yield app
 
 

@@ -1,9 +1,9 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from project.components.schemas import BaseSchema
 from project.components.schemas import ListResponseSchema
+from project.components.schemas import ParentOptionalFields
 
 
 class ResourceRequestSchema(BaseSchema):
@@ -19,13 +19,8 @@ class ResourceRequestCreateSchema(ResourceRequestSchema):
     """Resource request schema used for creation."""
 
 
-class ResourceRequestUpdateSchema(ResourceRequestSchema):
+class ResourceRequestUpdateSchema(ResourceRequestSchema, metaclass=ParentOptionalFields):
     """Resource request schema used for update."""
-
-    project_id: Optional[UUID]
-    requested_by_user_id: Optional[str]
-    requested_for: Optional[str]
-    completed_at: Optional[datetime]
 
 
 class ResourceRequestResponseSchema(ResourceRequestSchema):

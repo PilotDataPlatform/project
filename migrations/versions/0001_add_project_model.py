@@ -22,7 +22,7 @@ def upgrade():
         sa.Column('code', sa.VARCHAR(length=32), nullable=False),
         sa.Column('name', sa.VARCHAR(length=256), nullable=False),
         sa.Column('description', sa.VARCHAR(length=256), nullable=False),
-        sa.Column('image_url', sa.VARCHAR(length=2048), nullable=False),
+        sa.Column('image_url', sa.VARCHAR(length=2083), nullable=True),
         sa.Column('created_at', postgresql.TIMESTAMP(timezone=True), nullable=False),
         sa.Column('updated_at', postgresql.TIMESTAMP(timezone=True), nullable=False),
         sa.Column('tags', postgresql.ARRAY(sa.VARCHAR(length=256)), nullable=False),
