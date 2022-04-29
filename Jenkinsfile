@@ -39,7 +39,17 @@ pipeline {
                 sh 'docker rmi $imagename:$commit'
             }
         }
-
+        stage('DEV Deploy') {
+          when {branch "develop"}
+          steps{
+            build(job: "/VRE-IaC/UpdateAppVersion", parameters: [
+              [$class: 'StringParameterValue', name: 'TF_TARGET_ENV', value: 'dev' ],
+              [$class: 'StringParameterValue', name: 'TARGET_RELEASE', value: 'project' ],
+              [$class: 'StringParameterValue', name: 'NEW_APP_VERSION', value: "$commit" ]
+            ])
+          }
+        }
+        
     }
 
 }
