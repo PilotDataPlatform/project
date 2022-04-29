@@ -5,8 +5,8 @@ services:
     build:
       target: project-image
       args:
-        - REGISTRY_USERNAME
-        - REGISTRY_PASSWORD
+        - PIP_USERNAME
+        - PIP_PASSWORD
     logging:
       driver: "json-file"
       options:
@@ -36,8 +36,8 @@ services:
     build:
       target: alembic-image
       args:
-        - REGISTRY_USERNAME
-        - REGISTRY_PASSWORD
+        - PIP_USERNAME
+        - PIP_PASSWORD
     environment:
       - RDS_DB_URI=${RDS_DB_URI:-postgresql://postgres:pilot5kX8@postgres:5432/project}
     volumes:

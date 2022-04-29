@@ -11,7 +11,7 @@ Service for managing projects and project related resources.
 1. Install [Docker](https://www.docker.com/get-started/).
 2. Export environment variables with credentials to internal package registry (PyPI).
 
-       export REGISTRY_USERNAME=... REGISTRY_PASSWORD=...
+       export PIP_USERNAME=... PIP_PASSWORD=...
 
 3. Start container with project application
 
@@ -24,7 +24,7 @@ Service for managing projects and project related resources.
 1. Install [Poetry](https://python-poetry.org/docs/#installation).
 2. Configure access to internal package registry (PyPI).
 
-       poetry config http-basic.pilot ${REGISTRY_USERNAME} ${REGISTRY_PASSWORD}
+       poetry config http-basic.pilot ${PIP_USERNAME} ${PIP_PASSWORD}
 
 3. Install dependencies.
 
