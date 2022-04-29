@@ -1,19 +1,23 @@
 from typing import Optional
 from uuid import UUID
 
+from pydantic import HttpUrl
+from pydantic import constr
+
 from project.components.schemas import BaseSchema
 from project.components.schemas import ListResponseSchema
+from project.components.schemas import ParentOptionalFields
 
 
 class ProjectSchema(BaseSchema):
     """General project schema."""
 
-    code: str = ''
-    name: str = ''
-    description: str = ''
-    image_url: str = ''
-    tags: list[str] = []
-    system_tags: list[str] = []
+    code: constr(min_length=3, max_length=32, regex=r'^[a-z][a-z0-9]*$', strip_whitespace=True)  # noqa: F722
+    name: constr(min_length=3, max_length=256, strip_whitespace=True)
+    description: constr(max_length=256, strip_whitespace=True) = ''
+    image_url: Optional[HttpUrl] = None
+    tags: list[constr(max_length=256, strip_whitespace=True)] = []
+    system_tags: list[constr(max_length=256)] = []
     is_discoverable: bool = False
 
 
@@ -21,16 +25,8 @@ class ProjectCreateSchema(ProjectSchema):
     """Project schema used for creation."""
 
 
-class ProjectUpdateSchema(ProjectSchema):
+class ProjectUpdateSchema(ProjectSchema, metaclass=ParentOptionalFields):
     """Project schema used for update."""
-
-    code: Optional[str]
-    name: Optional[str]
-    description: Optional[str]
-    image_url: Optional[str]
-    tags: Optional[list[str]]
-    system_tags: Optional[list[str]]
-    is_discoverable: Optional[bool]
 
 
 class ProjectResponseSchema(ProjectSchema):

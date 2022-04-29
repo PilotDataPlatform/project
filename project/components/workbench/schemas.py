@@ -1,9 +1,9 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from project.components.schemas import BaseSchema
 from project.components.schemas import ListResponseSchema
+from project.components.schemas import ParentOptionalFields
 
 
 class WorkbenchSchema(BaseSchema):
@@ -19,13 +19,8 @@ class WorkbenchCreateSchema(WorkbenchSchema):
     """Workbench schema used for creation."""
 
 
-class WorkbenchUpdateSchema(WorkbenchSchema):
+class WorkbenchUpdateSchema(WorkbenchSchema, metaclass=ParentOptionalFields):
     """Workbench schema used for update."""
-
-    project_id: Optional[UUID]
-    resource: Optional[str]
-    deployed_at: Optional[datetime]
-    deployed_by_user_id: Optional[str]
 
 
 class WorkbenchResponseSchema(WorkbenchSchema):

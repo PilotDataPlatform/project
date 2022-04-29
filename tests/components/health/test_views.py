@@ -3,7 +3,8 @@ from unittest.mock import Mock
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from project.dependencies import get_db_session
+from project.components.health.db_checker import DBChecker
+from project.components.health.dependencies import get_db_checker
 
 
 class TestHealthViews:
@@ -13,12 +14,12 @@ class TestHealthViews:
         assert response.status_code == 204
 
     async def test_health_endpoint_returns_503_when_db_is_not_live(self, client, override_dependencies):
-        def db_session():
+        def db_checker():
             session = Mock()
             session.execute = AsyncMock(side_effect=SQLAlchemyError)
-            return session
+            return DBChecker(session)
 
-        with override_dependencies({get_db_session: db_session}):
+        with override_dependencies({get_db_checker: db_checker}):
             response = await client.get('/v1/health/')
 
         assert response.status_code == 503

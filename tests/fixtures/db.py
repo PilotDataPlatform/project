@@ -5,6 +5,9 @@ from pathlib import Path
 import pytest
 from alembic.command import upgrade
 from alembic.config import Config
+from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
 from testcontainers.postgres import PostgresContainer
 
 POSTGRES_DOCKER_IMAGE = 'postgres:14.2-alpine'
@@ -27,11 +30,11 @@ def project_root() -> Path:
     while path.name != 'project':
         path = path.parent
 
-    return path
+    yield path
 
 
 @pytest.fixture(scope='session')
-def database_uri(project_root) -> str:
+def db_uri(project_root) -> str:
     with PostgresContainer(POSTGRES_DOCKER_IMAGE) as pg_container:
         database_uri = pg_container.get_connection_url()
 
@@ -41,3 +44,18 @@ def database_uri(project_root) -> str:
             upgrade(config, 'head')
 
         yield database_uri
+
+
+@pytest.fixture(scope='session')
+def db_engine(settings) -> AsyncEngine:
+    yield create_async_engine(settings.RDS_DB_URI, echo=settings.RDS_ECHO_SQL_QUERIES)
+
+
+@pytest.fixture
+async def db_session(db_engine) -> AsyncSession:
+    session = AsyncSession(bind=db_engine, expire_on_commit=False)
+
+    yield session
+
+    await session.rollback()
+    await session.close()
