@@ -23,10 +23,12 @@ pipeline {
             when { branch 'develop' }
             steps {
                 script {
+                  withCredentials([usernamePassword(credentialsId:'readonly', usernameVariable: 'PIP_USERNAME', passwordVariable: 'PIP_PASSWORD')]) {  
                     docker.withRegistry('https://ghcr.io', registryCredential) {
                         customImage = docker.build('$imagename:$commit')
                         customImage.push()
                     }
+                  }  
                 }
             }
         }
