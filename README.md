@@ -38,3 +38,5 @@ Service for managing projects and project related resources.
 6. Generate migration (based on comparison of database to defined models).
 
        docker compose run --rm alembic revision --autogenerate -m "Migration message" --rev-id 0002 --depends-on 0001
+
+
