@@ -1,5 +1,9 @@
 # Project Service
 
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
+
+## About
+
 Service for managing projects and project related resources.
 
 ### Start
