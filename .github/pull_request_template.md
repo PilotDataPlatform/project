@@ -4,7 +4,7 @@
 
 ## JIRA Issues
 
-(What JIRA issues this merge request is related to)
+(What JIRA issues this pull request is related to)
 
 ## Type of Change
 
