@@ -18,7 +18,7 @@ RUN apt-get update \
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-RUN poetry config http-basic.pilot ${PIP_USERNAME} ${PIP_PASSWORD}
+RUN poetry config virtualenvs.create false && poetry config http-basic.pilot ${PIP_USERNAME} ${PIP_PASSWORD}
 
 WORKDIR /app
 
