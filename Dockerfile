@@ -18,7 +18,7 @@ RUN apt-get update \
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-RUN poetry config virtualenvs.create false && poetry config http-basic.pilot ${PIP_USERNAME} ${PIP_PASSWORD}
+RUN poetry config http-basic.pilot ${PIP_USERNAME} ${PIP_PASSWORD}
 
 WORKDIR /app
 
@@ -42,6 +42,9 @@ RUN poetry install --no-root --no-interaction
 FROM development-environment AS alembic-image
 
 ENV ALEMBIC_CONFIG=migrations/alembic.ini
+
+COPY project ./project
+COPY migrations ./migrations
 
 ENTRYPOINT ["python3", "-m", "alembic"]
 
