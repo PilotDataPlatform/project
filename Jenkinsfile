@@ -40,8 +40,8 @@ pipeline {
         stage('DEV: Remove image') {
             when { branch 'develop' }
             steps {
-                sh 'docker rmi $initImagename:$commit'
-                sh 'docker rmi $imagename:$commit'
+                sh 'docker rmi $imagename:alembic-$commit'
+                sh 'docker rmi $imagename:project-$commit'
             }
         }
         /**
