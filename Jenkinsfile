@@ -4,7 +4,6 @@ pipeline {
 
     environment {
         imagename = 'ghcr.io/pilotdataplatform/project'
-        initImagename = 'ghcr.io/pilotdataplatform/project/alembic'
         commit = sh(returnStdout: true, script: 'git describe --always').trim()
         registryCredential = 'pilot-ghcr'
     }
@@ -26,11 +25,11 @@ pipeline {
                 script {
                   withCredentials([usernamePassword(credentialsId:'readonly', usernameVariable: 'PIP_USERNAME', passwordVariable: 'PIP_PASSWORD')]) {  
                     docker.withRegistry('https://ghcr.io', registryCredential) {
-                        customImage = docker.build("$initImagename:$commit", "--target alembic-image --build-arg PIP_USERNAME=${PIP_USERNAME} --build-arg PIP_PASSWORD=${PIP_PASSWORD} --add-host git.indocresearch.org:10.4.3.151 .")
+                        customImage = docker.build("$imagename:alembic-$commit", "--target alembic-image --build-arg PIP_USERNAME=${PIP_USERNAME} --build-arg PIP_PASSWORD=${PIP_PASSWORD} --add-host git.indocresearch.org:10.4.3.151 .")
                         customImage.push()
                     }   
                     docker.withRegistry('https://ghcr.io', registryCredential) {
-                        customImage = docker.build("$imagename:$commit", "--target project-image --build-arg PIP_USERNAME=${PIP_USERNAME} --build-arg PIP_PASSWORD=${PIP_PASSWORD} --add-host git.indocresearch.org:10.4.3.151 .")
+                        customImage = docker.build("$imagename:project-$commit", "--target project-image --build-arg PIP_USERNAME=${PIP_USERNAME} --build-arg PIP_PASSWORD=${PIP_PASSWORD} --add-host git.indocresearch.org:10.4.3.151 .")
                         customImage.push()
                     }
                   }  
