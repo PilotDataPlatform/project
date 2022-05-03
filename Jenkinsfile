@@ -44,7 +44,6 @@ pipeline {
                 sh 'docker rmi $imagename:project-$commit'
             }
         }
-        /**
         stage('DEV Deploy') {
           when {branch "develop"}
           steps{
@@ -55,7 +54,6 @@ pipeline {
             ])
           }
         }
-        **/
     }
 
 }
