@@ -4,6 +4,7 @@ pipeline {
 
     environment {
         imagename = 'ghcr.io/pilotdataplatform/project'
+        initImagename = 'ghcr.io/pilotdataplatform/project/alembic'
         commit = sh(returnStdout: true, script: 'git describe --always').trim()
         registryCredential = 'pilot-ghcr'
     }
@@ -25,7 +26,11 @@ pipeline {
                 script {
                   withCredentials([usernamePassword(credentialsId:'readonly', usernameVariable: 'PIP_USERNAME', passwordVariable: 'PIP_PASSWORD')]) {  
                     docker.withRegistry('https://ghcr.io', registryCredential) {
-                        customImage = docker.build("$imagename:$commit", "--build-arg PIP_USERNAME=${PIP_USERNAME} --build-arg PIP_PASSWORD=${PIP_PASSWORD} --add-host git.indocresearch.org:10.4.3.151 .")
+                        customImage = docker.build("$initImagename:$commit", "--target alembic-image --build-arg PIP_USERNAME=${PIP_USERNAME} --build-arg PIP_PASSWORD=${PIP_PASSWORD} --add-host git.indocresearch.org:10.4.3.151 .")
+                        customImage.push()
+                    }   
+                    docker.withRegistry('https://ghcr.io', registryCredential) {
+                        customImage = docker.build("$imagename:$commit", "--target project-image --build-arg PIP_USERNAME=${PIP_USERNAME} --build-arg PIP_PASSWORD=${PIP_PASSWORD} --add-host git.indocresearch.org:10.4.3.151 .")
                         customImage.push()
                     }
                   }  
@@ -36,9 +41,11 @@ pipeline {
         stage('DEV: Remove image') {
             when { branch 'develop' }
             steps {
+                sh 'docker rmi $initImagename:$commit'
                 sh 'docker rmi $imagename:$commit'
             }
         }
+        /**
         stage('DEV Deploy') {
           when {branch "develop"}
           steps{
@@ -49,7 +56,7 @@ pipeline {
             ])
           }
         }
-        
+        **/
     }
 
 }
