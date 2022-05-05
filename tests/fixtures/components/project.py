@@ -29,7 +29,7 @@ class ProjectFactory(BaseFactory):
         code: str = ...,
         name: str = ...,
         description: str = ...,
-        image_url: str = ...,
+        logo_name: str = ...,
         tags: list[str] = ...,
         system_tags: list[str] = ...,
         is_discoverable: bool = ...,
@@ -43,8 +43,8 @@ class ProjectFactory(BaseFactory):
         if description is ...:
             description = self.fake.sentence()
 
-        if image_url is ...:
-            image_url = self.fake.image_url()
+        if logo_name is ...:
+            logo_name = self.fake.file_name(extension='png')
 
         if tags is ...:
             tags = self.fake.words(3, unique=True)
@@ -59,7 +59,7 @@ class ProjectFactory(BaseFactory):
             code=code,
             name=name,
             description=description,
-            image_url=image_url,
+            logo_name=logo_name,
             tags=tags,
             system_tags=system_tags,
             is_discoverable=is_discoverable,
@@ -70,12 +70,12 @@ class ProjectFactory(BaseFactory):
         code: str = ...,
         name: str = ...,
         description: str = ...,
-        image_url: str = ...,
+        logo_name: str = ...,
         tags: list[str] = ...,
         system_tags: list[str] = ...,
         is_discoverable: bool = ...,
     ) -> Project:
-        entry = self.generate(code, name, description, image_url, tags, system_tags, is_discoverable)
+        entry = self.generate(code, name, description, logo_name, tags, system_tags, is_discoverable)
 
         async with self.crud:
             return await self.crud.create(entry)

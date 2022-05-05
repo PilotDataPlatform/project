@@ -13,9 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
-
 from project.components.crud import CRUD
+from tests.fixtures.fake import Faker
 
 
 class BaseFactory:

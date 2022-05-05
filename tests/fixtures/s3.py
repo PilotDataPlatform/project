@@ -13,25 +13,28 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from io import BytesIO
+from typing import Any
+from unittest.mock import AsyncMock
 
-import faker
 import pytest
-from PIL import Image
+
+from project.dependencies.s3 import S3Client
 
 
-class Faker(faker.Faker):
-    def image(self, size: tuple[int, int] = (512, 512), format_type: str = 'PNG') -> bytes:
-        """Generate an image."""
+class MockS3Client:
+    def __init__(self) -> None:
+        self.mock = AsyncMock()
 
-        buffer = BytesIO()
-        color = self.color(hue='red')
-        image = Image.new('RGB', size, color)
-        image.save(buffer, format_type)
+    async def __aenter__(self) -> S3Client:
+        return self.mock
 
-        return buffer.getvalue()
+    async def __aexit__(self, *args: Any) -> None:
+        return None
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self.mock, name)
 
 
 @pytest.fixture
-def fake() -> Faker:
-    yield Faker()
+def s3_client() -> S3Client:
+    yield MockS3Client()

@@ -21,9 +21,12 @@ from fastapi import Depends
 from fastapi.responses import Response
 
 from project.components.project.crud import ProjectCRUD
+from project.components.project.dependencies import get_logo_uploader
 from project.components.project.dependencies import get_project_crud
+from project.components.project.logo_uploader import LogoUploader
 from project.components.project.schemas import ProjectCreateSchema
 from project.components.project.schemas import ProjectListResponseSchema
+from project.components.project.schemas import ProjectLogoUploadSchema
 from project.components.project.schemas import ProjectResponseSchema
 from project.components.project.schemas import ProjectUpdateSchema
 from project.dependencies.parameters import PageParameters
@@ -92,3 +95,24 @@ async def delete_project(project_id: UUID, project_crud: ProjectCRUD = Depends(g
     response = Response(status_code=204)
 
     return response
+
+
+@router.post('/{project_id}/logo', summary='Upload a logo for a project.', response_model=ProjectResponseSchema)
+async def upload_project_logo(
+    project_id: UUID,
+    body: ProjectLogoUploadSchema,
+    project_crud: ProjectCRUD = Depends(get_project_crud),
+    logo_uploader: LogoUploader = Depends(get_logo_uploader),
+) -> ProjectResponseSchema:
+    """Upload a logo for a project."""
+
+    image = body.get_image()
+    logo_name = f'{project_id}.png'
+
+    await logo_uploader.convert_and_upload(image, logo_name)
+
+    async with project_crud:
+        project_update = ProjectUpdateSchema(logo_name=logo_name)
+        project = await project_crud.update(project_id, project_update)
+
+    return project

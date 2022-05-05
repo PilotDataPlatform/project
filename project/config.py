@@ -20,6 +20,7 @@ from urllib.parse import urlparse
 from pydantic import BaseSettings
 from pydantic import Extra
 from pydantic import Field
+from pydantic import HttpUrl
 from pydantic import validator
 from pydantic.fields import ModelField
 
@@ -39,6 +40,11 @@ class Settings(BaseSettings):
     RDS_DB_NAME: str = 'project'
     RDS_DB_URI: str = 'postgresql://postgres:pilot5kX8@127.0.0.1:6432/project'
     RDS_ECHO_SQL_QUERIES: bool = False
+
+    S3_ENDPOINT_URL: HttpUrl = 'http://127.0.0.1:9100'
+    S3_ACCESS_KEY: str = 'GMIMPKTWGOKHIQYYQHPO'
+    S3_SECRET_KEY: str = 'KLdvMcrHMVnar/HJGKVAS/TRglfFvzDrbYpdknbc'
+    S3_BUCKET_FOR_PROJECT_LOGOS: str = 'project-logos'
 
     OPEN_TELEMETRY_ENABLED: bool = False
     OPEN_TELEMETRY_HOST: str = '127.0.0.1'

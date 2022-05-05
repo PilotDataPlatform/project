@@ -13,9 +13,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from base64 import b64encode
+
 import pytest
 
 from project.components.exceptions import NotFound
+from project.dependencies import get_s3_client
 
 
 class TestProjectViews:
@@ -93,3 +96,25 @@ class TestProjectViews:
 
         with pytest.raises(NotFound):
             await project_crud.retrieve_by_id(created_project.id)
+
+    async def test_upload_project_logo_calls_put_object_method_and_update_project_logo_name(
+        self, client, override_dependencies, s3_client, project_factory, fake, project_crud
+    ):
+        created_project = await project_factory.create()
+        expected_logo_name = f'{created_project.id}.png'
+
+        image = b64encode(fake.image()).decode()
+        payload = {'base64': image}
+
+        with override_dependencies({get_s3_client: lambda: s3_client}):
+            response = await client.post(f'/v1/projects/{created_project.id}/logo', json=payload)
+
+        assert response.status_code == 200
+
+        s3_client.put_object.assert_called_once()
+
+        body = response.json()
+        received_project_id = body['id']
+        received_project = await project_crud.retrieve_by_id(received_project_id)
+
+        assert received_project.logo_name == expected_logo_name

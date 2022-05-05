@@ -15,8 +15,10 @@
 
 from project.dependencies.db import get_db_engine
 from project.dependencies.db import get_db_session
+from project.dependencies.s3 import get_s3_client
 
 __all__ = [
     'get_db_engine',
     'get_db_session',
+    'get_s3_client',
 ]
