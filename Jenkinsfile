@@ -31,7 +31,7 @@ pipeline {
                             customImage = docker.build('$imagename:project-$commit', '--target project-image .')
                             customImage.push()
                         }
-                    }
+
                 }
             }
         }
