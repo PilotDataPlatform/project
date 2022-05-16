@@ -13,8 +13,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from base64 import b64encode
-
 import pytest
 
 from project.components.exceptions import NotFound
@@ -72,6 +70,17 @@ class TestProjectViews:
 
         assert received_project.code == project.code
 
+    async def test_create_project_returns_conflict_response_when_project_with_same_code_already_exists(
+        self, client, project_factory, project_crud
+    ):
+        created_project = await project_factory.create()
+        project = project_factory.generate(code=created_project.code)
+
+        payload = project.to_payload()
+        response = await client.post('/v1/projects/', json=payload)
+
+        assert response.status_code == 409
+
     async def test_update_project_updates_project_field_by_id(self, client, project_factory, project_crud):
         created_project = await project_factory.create()
         project = project_factory.generate()
@@ -87,7 +96,7 @@ class TestProjectViews:
 
         assert received_project.description == project.description
 
-    async def test_delete_project(self, client, project_factory, project_crud):
+    async def test_delete_project_removes_project_by_id(self, client, project_factory, project_crud):
         created_project = await project_factory.create()
 
         response = await client.delete(f'/v1/projects/{created_project.id}')
@@ -97,14 +106,13 @@ class TestProjectViews:
         with pytest.raises(NotFound):
             await project_crud.retrieve_by_id(created_project.id)
 
-    async def test_upload_project_logo_calls_put_object_method_and_update_project_logo_name(
+    async def test_upload_project_logo_calls_put_object_method_and_updates_project_logo_name(
         self, client, override_dependencies, s3_client, project_factory, fake, project_crud
     ):
         created_project = await project_factory.create()
         expected_logo_name = f'{created_project.id}.png'
 
-        image = b64encode(fake.image()).decode()
-        payload = {'base64': image}
+        payload = {'base64': fake.base64_image()}
 
         with override_dependencies({get_s3_client: lambda: s3_client}):
             response = await client.post(f'/v1/projects/{created_project.id}/logo', json=payload)
@@ -118,3 +126,11 @@ class TestProjectViews:
         received_project = await project_crud.retrieve_by_id(received_project_id)
 
         assert received_project.logo_name == expected_logo_name
+
+    async def test_upload_project_logo_returns_not_found_response_for_non_existing_project(self, client, fake):
+        project_id = fake.uuid4()
+        payload = {'base64': fake.base64_image()}
+
+        response = await client.post(f'/v1/projects/{project_id}/logo', json=payload)
+
+        assert response.status_code == 404

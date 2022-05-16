@@ -36,7 +36,7 @@ async def get_db_status(db_checker: DBChecker = Depends(get_db_checker)) -> Resp
 
     is_online = await db_checker.is_online()
 
-    logger.info('Received is_online status.', extra={'is_online': is_online})
+    logger.info(f'Received is_online status "{is_online}".')
 
     response = Response(status_code=204)
     if not is_online:

@@ -50,7 +50,7 @@ repos:
         ]
         args: [
           '--select=E,W,F,C,B,A,C4,T1,G,T0',
-          '--ignore=W503,B008,B305,A003,G003,G004',
+          '--ignore=W503,B008,B305,A003,G004',
           '--max-complexity=10',
           '--max-line-length=120',
         ]

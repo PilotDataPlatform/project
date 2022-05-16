@@ -43,7 +43,8 @@ async def list_projects(
 
     pagination = page_parameters.to_pagination()
 
-    page = await project_crud.paginate(pagination)
+    async with project_crud:
+        page = await project_crud.paginate(pagination)
 
     response = ProjectListResponseSchema.from_page(page)
 
@@ -56,7 +57,8 @@ async def get_project(
 ) -> ProjectResponseSchema:
     """Get a project by id or code."""
 
-    project = await project_crud.retrieve_by_id_or_code(project_id)
+    async with project_crud:
+        project = await project_crud.retrieve_by_id_or_code(project_id)
 
     return project
 
@@ -105,6 +107,9 @@ async def upload_project_logo(
     logo_uploader: LogoUploader = Depends(get_logo_uploader),
 ) -> ProjectResponseSchema:
     """Upload a logo for a project."""
+
+    async with project_crud:
+        await project_crud.retrieve_by_id(project_id)
 
     image = body.get_image()
     logo_name = f'{project_id}.png'
