@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     VERSION: str = '0.1.0'
     HOST: str = '127.0.0.1'
     PORT: int = 5064
+    WORKERS: int = 1
 
     RDS_DB_HOST: str = Field('127.0.0.1', env={'RDS_DB_HOST', 'OPSDB_UTILITY_HOST'})
     RDS_DB_PORT: int = Field(6432, env={'RDS_DB_PORT', 'OPSDB_UTILITY_PORT'})
