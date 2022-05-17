@@ -1,10 +1,6 @@
 FROM python:3.9.11-buster AS production-environment
 
-ARG PIP_USERNAME
-ARG PIP_PASSWORD
-
-ENV PYTHONUNBUFFERED=true \
-    PYTHONDONTWRITEBYTECODE=true \
+ENV PYTHONDONTWRITEBYTECODE=true \
     PYTHONIOENCODING=UTF-8 \
     POETRY_VERSION=1.1.13 \
     POETRY_HOME="/opt/poetry" \
@@ -17,8 +13,6 @@ RUN apt-get update \
         build-essential
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
-
-RUN poetry config http-basic.pilot ${PIP_USERNAME} ${PIP_PASSWORD}
 
 WORKDIR /app
 

@@ -13,16 +13,28 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from project.components.crud import CRUD
-from tests.fixtures.fake import Faker
+from typing import Any
+from unittest.mock import AsyncMock
+
+import pytest
+
+from project.dependencies.s3 import S3Client
 
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+class MockS3Client:
+    def __init__(self) -> None:
+        self.mock = AsyncMock()
 
-    crud: CRUD
-    fake: Faker
+    async def __aenter__(self) -> S3Client:
+        return self.mock
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+    async def __aexit__(self, *args: Any) -> None:
+        return None
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self.mock, name)
+
+
+@pytest.fixture
+def s3_client() -> S3Client:
+    yield MockS3Client()

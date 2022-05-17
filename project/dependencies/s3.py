@@ -13,27 +13,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import NewType
 
-from project.components.project.crud import ProjectCRUD
-from project.components.project.logo_uploader import LogoUploader
+from aiobotocore.client import AioBaseClient
+from aiobotocore.session import get_session
+from botocore.config import Config
+from fastapi import Depends
+
 from project.config import Settings
 from project.config import get_settings
-from project.dependencies import get_db_session
-from project.dependencies import get_s3_client
-from project.dependencies.s3 import S3Client
+
+S3Client = NewType('S3Client', AioBaseClient)
 
 
-def get_project_crud(db_session: AsyncSession = Depends(get_db_session)) -> ProjectCRUD:
-    """Return an instance of ProjectCRUD as a dependency."""
+def get_s3_client(settings: Settings = Depends(get_settings)) -> S3Client:
+    """Create a FastAPI callable dependency for Boto3 Client instance."""
 
-    return ProjectCRUD(db_session)
+    session = get_session()
+    client = session.create_client(
+        's3',
+        aws_access_key_id=settings.S3_ACCESS_KEY,
+        aws_secret_access_key=settings.S3_SECRET_KEY,
+        endpoint_url=settings.S3_ENDPOINT_URL,
+        config=Config(signature_version='s3v4'),
+    )
 
-
-def get_logo_uploader(
-    s3_client: S3Client = Depends(get_s3_client), settings: Settings = Depends(get_settings)
-) -> LogoUploader:
-    """Return an instance of LogoUploader as a dependency."""
-
-    return LogoUploader(s3_client, settings.S3_BUCKET_FOR_PROJECT_LOGOS)
+    return client

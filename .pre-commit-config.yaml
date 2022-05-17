@@ -50,7 +50,7 @@ repos:
         ]
         args: [
           '--select=E,W,F,C,B,A,C4,T1,G,T0',
-          '--ignore=W503,B008,B305,A003,G003,G004',
+          '--ignore=W503,B008,B305,A003,G004',
           '--max-complexity=10',
           '--max-line-length=120',
         ]
@@ -63,4 +63,14 @@ repos:
           '--wrap-summaries=120',
           '--wrap-descriptions=120',
           '--in-place',
+        ]
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.1.14
+    hooks:
+      - id: insert-license
+        files: \.py$
+        args: [
+          '--license-filepath=COPYRIGHT',
+          '--comment-style=#',
         ]

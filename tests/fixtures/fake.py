@@ -13,8 +13,31 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from base64 import b64encode
+from io import BytesIO
+
+import faker
 import pytest
-from faker import Faker
+from PIL import Image
+
+
+class Faker(faker.Faker):
+    def image(self, size: tuple[int, int] = (512, 512), format_type: str = 'PNG') -> bytes:
+        """Generate an image."""
+
+        buffer = BytesIO()
+        color = self.color(hue='red')
+        image = Image.new('RGB', size, color)
+        image.save(buffer, format_type)
+
+        return buffer.getvalue()
+
+    def base64_image(self, size: tuple[int, int] = (512, 512), format_type: str = 'PNG') -> str:
+        """Generate an image as base64 string."""
+
+        image = self.image(size, format_type)
+
+        return b64encode(image).decode()
 
 
 @pytest.fixture

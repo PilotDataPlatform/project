@@ -23,15 +23,14 @@ pipeline {
             when { branch 'develop' }
             steps {
                 script {
-                        docker.withRegistry('https://ghcr.io', registryCredential) {
-                            customImage = docker.build('$imagename:alembic-$commit', '--target alembic-image .')
-                            customImage.push()
-                        }
-                        docker.withRegistry('https://ghcr.io', registryCredential) {
-                            customImage = docker.build('$imagename:project-$commit', '--target project-image .')
-                            customImage.push()
-                        }
-
+                    docker.withRegistry('https://ghcr.io', registryCredential) {
+                        customImage = docker.build('$imagename:alembic-$commit', '--target alembic-image .')
+                        customImage.push()
+                    }
+                    docker.withRegistry('https://ghcr.io', registryCredential) {
+                        customImage = docker.build('$imagename:project-$commit', '--target project-image .')
+                        customImage.push()
+                    }
                 }
             }
         }
