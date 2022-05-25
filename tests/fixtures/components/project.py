@@ -13,8 +13,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Any
+
 import pytest
 
+from project.components import ModelList
 from project.components import Project
 from project.components.project.crud import ProjectCRUD
 from project.components.project.schemas import ProjectSchema
@@ -74,11 +77,31 @@ class ProjectFactory(BaseFactory):
         tags: list[str] = ...,
         system_tags: list[str] = ...,
         is_discoverable: bool = ...,
+        **kwds: Any,
     ) -> Project:
         entry = self.generate(code, name, description, logo_name, tags, system_tags, is_discoverable)
 
         async with self.crud:
-            return await self.crud.create(entry)
+            return await self.crud.create(entry, **kwds)
+
+    async def bulk_create(
+        self,
+        number: int,
+        code: str = ...,
+        name: str = ...,
+        description: str = ...,
+        logo_name: str = ...,
+        tags: list[str] = ...,
+        system_tags: list[str] = ...,
+        is_discoverable: bool = ...,
+        **kwds: Any,
+    ) -> ModelList[Project]:
+        return ModelList(
+            [
+                await self.create(code, name, description, logo_name, tags, system_tags, is_discoverable, **kwds)
+                for _ in range(number)
+            ]
+        )
 
 
 @pytest.fixture

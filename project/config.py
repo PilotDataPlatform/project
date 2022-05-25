@@ -46,10 +46,16 @@ class Settings(BaseSettings):
     S3_ACCESS_KEY: str = 'GMIMPKTWGOKHIQYYQHPO'
     S3_SECRET_KEY: str = 'KLdvMcrHMVnar/HJGKVAS/TRglfFvzDrbYpdknbc'
     S3_BUCKET_FOR_PROJECT_LOGOS: str = 'project-logos'
+    S3_PREFIX_FOR_PROJECT_IMAGE_URLS: HttpUrl = 'http://127.0.0.1:9100/project-logos'
 
     OPEN_TELEMETRY_ENABLED: bool = False
     OPEN_TELEMETRY_HOST: str = '127.0.0.1'
     OPEN_TELEMETRY_PORT: int = 6831
+
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'
+        extra = Extra.ignore
 
     @validator('RDS_DB_URI')
     def uri_must_have_value(cls, value: str, values: dict[str, Any], field: ModelField) -> str:
@@ -69,11 +75,6 @@ class Settings(BaseSettings):
             return db_uri
 
         return value
-
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-        extra = Extra.ignore
 
     def __init__(self, *args: Any, **kwds: Any) -> None:
         super().__init__(*args, **kwds)

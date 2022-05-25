@@ -26,16 +26,15 @@ from project.config import get_settings
 S3Client = NewType('S3Client', AioBaseClient)
 
 
-def get_s3_client(settings: Settings = Depends(get_settings)) -> S3Client:
+async def get_s3_client(settings: Settings = Depends(get_settings)) -> S3Client:
     """Create a FastAPI callable dependency for Boto3 Client instance."""
 
     session = get_session()
-    client = session.create_client(
+    async with session.create_client(
         's3',
         aws_access_key_id=settings.S3_ACCESS_KEY,
         aws_secret_access_key=settings.S3_SECRET_KEY,
         endpoint_url=settings.S3_ENDPOINT_URL,
         config=Config(signature_version='s3v4'),
-    )
-
-    return client
+    ) as client:
+        yield client

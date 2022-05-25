@@ -13,17 +13,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
+from typing import Optional
 
-from project.components.crud import CRUD
+from project.components.filtering import Filtering
 
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+class TestFiltering:
+    def test__bool__returns_true_when_at_least_one_attribute_is_set(self):
+        class CustomFiltering(Filtering):
+            field: Optional[list[str]] = None
 
-    crud: CRUD
-    fake: Faker
+        filtering = CustomFiltering(field=['value'])
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+        assert bool(filtering) is True
+
+    def test__bool__returns_false_when_all_attributes_are_not_set(self):
+        class CustomFiltering(Filtering):
+            field: Optional[int] = None
+
+        filtering = CustomFiltering()
+
+        assert bool(filtering) is False

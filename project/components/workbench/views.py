@@ -20,13 +20,13 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 
+from project.components.parameters import PageParameters
 from project.components.workbench.crud import WorkbenchCRUD
 from project.components.workbench.dependencies import get_workbench_crud
 from project.components.workbench.schemas import WorkbenchCreateSchema
 from project.components.workbench.schemas import WorkbenchListResponseSchema
 from project.components.workbench.schemas import WorkbenchResponseSchema
 from project.components.workbench.schemas import WorkbenchUpdateSchema
-from project.dependencies.parameters import PageParameters
 
 router = APIRouter(prefix='/workbenches', tags=['Workbenches'])
 

@@ -13,17 +13,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
+from pydantic import BaseModel
 
-from project.components.crud import CRUD
+from project.components.models import ModelList
 
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+class TestModelList:
+    def test_map_by_field_returns_map_based_on_field_argument_as_key(self, fake):
+        class Model(BaseModel):
+            id: int
 
-    crud: CRUD
-    fake: Faker
+        model_1 = Model(id=fake.pyint())
+        model_2 = Model(id=fake.pyint())
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+        models = ModelList([model_1, model_2])
+
+        expected_map = {
+            str(model_1.id): model_1,
+            str(model_2.id): model_2,
+        }
+
+        assert models.map_by_field('id', str) == expected_map

@@ -13,17 +13,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
+from typing import Type
 
-from project.components.crud import CRUD
+from pydantic import BaseModel
+from sqlalchemy.sql import Select
+
+from project.components import DBModel
 
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+class Filtering(BaseModel):
+    """Base filtering control parameters."""
 
-    crud: CRUD
-    fake: Faker
+    def __bool__(self) -> bool:
+        """Filtering considered valid when at least one attribute does not have a default value."""
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+        values = self.dict()
+
+        for name, field in self.__fields__.items():
+            if values[name] != field.default:
+                return True
+
+        return False
+
+    def apply(self, statement: Select, model: Type[DBModel]) -> Select:
+        """Return statement with applied filtering."""
+
+        raise NotImplementedError

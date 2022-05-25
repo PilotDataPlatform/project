@@ -20,31 +20,38 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 
+from project.components.parameters import PageParameters
+from project.components.parameters import SortParameters
 from project.components.project.crud import ProjectCRUD
 from project.components.project.dependencies import get_logo_uploader
 from project.components.project.dependencies import get_project_crud
 from project.components.project.logo_uploader import LogoUploader
+from project.components.project.parameters import ProjectFilterParameters
+from project.components.project.parameters import ProjectSortByFields
 from project.components.project.schemas import ProjectCreateSchema
 from project.components.project.schemas import ProjectListResponseSchema
 from project.components.project.schemas import ProjectLogoUploadSchema
 from project.components.project.schemas import ProjectResponseSchema
 from project.components.project.schemas import ProjectUpdateSchema
-from project.dependencies.parameters import PageParameters
 
 router = APIRouter(prefix='/projects', tags=['Projects'])
 
 
 @router.get('/', summary='List all projects.', response_model=ProjectListResponseSchema)
 async def list_projects(
+    filter_parameters: ProjectFilterParameters = Depends(),
+    sort_parameters: SortParameters.with_sort_by_fields(ProjectSortByFields) = Depends(),
     page_parameters: PageParameters = Depends(),
     project_crud: ProjectCRUD = Depends(get_project_crud),
 ) -> ProjectListResponseSchema:
     """List all projects."""
 
+    filtering = filter_parameters.to_filtering()
+    sorting = sort_parameters.to_sorting()
     pagination = page_parameters.to_pagination()
 
     async with project_crud:
-        page = await project_crud.paginate(pagination)
+        page = await project_crud.paginate(pagination, sorting, filtering)
 
     response = ProjectListResponseSchema.from_page(page)
 

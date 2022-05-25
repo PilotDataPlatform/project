@@ -16,16 +16,16 @@
 import math
 
 from pydantic import BaseModel
-from pydantic import Field
+from pydantic import conint
 
 from project.components import DBModel
 
 
 class Pagination(BaseModel):
-    """Pagination control parameters."""
+    """Base pagination control parameters."""
 
-    page: int = Field(default=0, ge=0)
-    page_size: int = Field(default=20, ge=1)
+    page: conint(ge=0) = 0
+    page_size: conint(ge=1) = 20
 
     @property
     def limit(self) -> int:

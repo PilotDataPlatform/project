@@ -39,7 +39,13 @@ class GetDBEngine:
 get_db_engine = GetDBEngine()
 
 
-def get_db_session(engine: AsyncEngine = Depends(get_db_engine)) -> AsyncSession:
+async def get_db_session(engine: AsyncEngine = Depends(get_db_engine)) -> AsyncSession:
     """Create a FastAPI callable dependency for SQLAlchemy AsyncSession instance."""
 
-    return AsyncSession(bind=engine, expire_on_commit=False)
+    session = AsyncSession(bind=engine, expire_on_commit=False)
+
+    try:
+        yield session
+        await session.commit()
+    finally:
+        await session.close()

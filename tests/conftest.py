@@ -20,5 +20,6 @@ pytest_plugins = [
     'tests.fixtures.app',
     'tests.fixtures.db',
     'tests.fixtures.fake',
+    'tests.fixtures.jq',
     'tests.fixtures.s3',
 ]

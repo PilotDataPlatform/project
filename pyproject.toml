@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "project"
-version = "0.1.0"
+version = "0.2.0"
 description = "Service for managing projects and project related resources."
 authors = ["Indoc Research"]
 
@@ -26,13 +26,16 @@ uvicorn = { extras = ["standard"], version = "0.17.6" }
 alembic = "1.7.7"
 faker = "13.3.2"
 httpx = "0.22.0"
+jq = "1.2.2"
 pytest = "7.1.1"
 pytest-asyncio = "0.18.1"
 pytest-cov = "3.0.0"
 pytest-mock = "3.7.0"
+pytest-random-order = "1.0.4"
 testcontainers = "3.4.2"
 
 [tool.pytest.ini_options]
+addopts = "-v --random-order"
 testpaths = "tests"
 asyncio_mode = "auto"
 

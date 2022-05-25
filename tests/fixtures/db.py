@@ -70,7 +70,7 @@ def db_engine(settings) -> AsyncEngine:
 async def db_session(db_engine) -> AsyncSession:
     session = AsyncSession(bind=db_engine, expire_on_commit=False)
 
-    yield session
-
-    await session.rollback()
-    await session.close()
+    try:
+        yield session
+    finally:
+        await session.close()

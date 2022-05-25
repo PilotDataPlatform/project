@@ -14,16 +14,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from base64 import urlsafe_b64decode
+from datetime import datetime
+from typing import Any
 from typing import Optional
 from uuid import UUID
 
 import magic
+from pydantic import HttpUrl
 from pydantic import constr
 from pydantic import validator
 
 from project.components.schemas import BaseSchema
 from project.components.schemas import ListResponseSchema
 from project.components.schemas import ParentOptionalFields
+from project.config import get_settings
 
 
 class ProjectSchema(BaseSchema):
@@ -50,9 +54,19 @@ class ProjectResponseSchema(ProjectSchema):
     """Default schema for single project in response."""
 
     id: UUID
+    created_at: datetime
+    image_url: Optional[HttpUrl] = None
 
     class Config:
         orm_mode = True
+
+    @validator('image_url', always=True)
+    def set_image_url(cls, _: Any, values: dict[str, Any]) -> Optional[str]:
+        if logo_name := values['logo_name']:
+            prefix = get_settings().S3_PREFIX_FOR_PROJECT_IMAGE_URLS.rstrip('/')
+            return f'{prefix}/{logo_name}'
+
+        return None
 
 
 class ProjectListResponseSchema(ListResponseSchema):

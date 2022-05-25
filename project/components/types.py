@@ -13,17 +13,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
-
-from project.components.crud import CRUD
+from enum import Enum
 
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+class StrEnum(str, Enum):
+    """Enum where members suppose to be strings."""
 
-    crud: CRUD
-    fake: Faker
+    @property
+    def value(self) -> str:
+        return self._value_
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+    @classmethod
+    def values(cls) -> list[str]:
+        return [field.value for field in cls]

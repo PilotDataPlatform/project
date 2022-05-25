@@ -13,17 +13,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
-
-from project.components.crud import CRUD
+from project.components.types import StrEnum
 
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+class TestStrEnum:
+    def test_values_returns_list_of_enum_values(self):
+        class CustomStrEnum(StrEnum):
+            KEY1 = 'value1'
+            KEY2 = 'value2'
 
-    crud: CRUD
-    fake: Faker
+        expected_values = ['value1', 'value2']
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+        assert CustomStrEnum.values() == expected_values
