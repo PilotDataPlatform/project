@@ -13,17 +13,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
+from project.components.sorting import Sorting
+from project.components.sorting import SortingOrder
 
-from project.components.crud import CRUD
 
+class TestSorting:
+    def test__bool__returns_true_when_field_attribute_is_set(self):
+        sorting = Sorting(field='value', order=SortingOrder.ASC)
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+        assert bool(sorting) is True
 
-    crud: CRUD
-    fake: Faker
+    def test__bool__returns_false_when_field_attribute_is_not_set(self):
+        sorting = Sorting(order=SortingOrder.DESC)
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+        assert bool(sorting) is False

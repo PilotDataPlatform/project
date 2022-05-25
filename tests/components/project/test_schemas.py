@@ -13,8 +13,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from os.path import join as urljoin
+
 import pytest
 
+from project.components.project.schemas import ProjectResponseSchema
 from project.components.project.schemas import ProjectSchema
 
 
@@ -33,3 +36,29 @@ class TestProjectSchema:
         project = ProjectSchema(name=' name ', code='code')
 
         assert project.name == 'name'
+
+
+class TestProjectResponseSchema:
+    def test_image_url_returns_none_when_logo_name_is_not_set(self, project_factory, fake):
+        generated_project = project_factory.generate()
+        project = ProjectResponseSchema(
+            id=fake.uuid4(), code=generated_project.code, name=generated_project.name, created_at=fake.past_datetime()
+        )
+
+        assert project.image_url is None
+
+    def test_image_url_returns_concatenated_url_with_logo_name_and_prefix_from_settings(
+        self, project_factory, fake, settings
+    ):
+        generated_project = project_factory.generate()
+        expected_image_url = urljoin(settings.S3_PREFIX_FOR_PROJECT_IMAGE_URLS, generated_project.logo_name)
+
+        project = ProjectResponseSchema(
+            id=fake.uuid4(),
+            code=generated_project.code,
+            name=generated_project.name,
+            logo_name=generated_project.logo_name,
+            created_at=fake.past_datetime(),
+        )
+
+        assert project.image_url == expected_image_url

@@ -14,6 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import Any
+from typing import Optional
+from typing import Type
 from typing import Union
 from uuid import UUID
 
@@ -32,16 +34,18 @@ from sqlalchemy.sql import Executable
 from project.components.db_model import DBModel
 from project.components.exceptions import AlreadyExists
 from project.components.exceptions import NotFound
+from project.components.filtering import Filtering
 from project.components.pagination import Page
 from project.components.pagination import Pagination
 from project.components.schemas import BaseSchema
+from project.components.sorting import Sorting
 
 
 class CRUD:
     """Base CRUD class for managing database models."""
 
     session: AsyncSession
-    model: DBModel
+    model: Type[DBModel]
 
     def __init__(self, db_session: AsyncSession) -> None:
         self.session = db_session
@@ -50,7 +54,7 @@ class CRUD:
     async def __aenter__(self) -> 'CRUD':
         """Start a new transaction."""
 
-        self.transaction = self.session.begin()
+        self.transaction = self.session.begin_nested()
         await self.transaction.__aenter__()
 
         return self
@@ -117,11 +121,11 @@ class CRUD:
         if result.rowcount == 0:
             raise NotFound()
 
-    async def create(self, entry_create: BaseSchema) -> DBModel:
+    async def create(self, entry_create: BaseSchema, **kwds: Any) -> DBModel:
         """Create a new entry."""
 
         values = entry_create.dict()
-        statement = insert(self.model).values(**values)
+        statement = insert(self.model).values(**(values | kwds))
         entry_id = await self._create_one(statement)
 
         entry = await self.retrieve_by_id(entry_id)
@@ -144,22 +148,30 @@ class CRUD:
 
         return entries
 
-    async def paginate(self, pagination: Pagination) -> Page:
+    async def paginate(
+        self, pagination: Pagination, sorting: Optional[Sorting] = None, filtering: Optional[Filtering] = None
+    ) -> Page:
         """Get all existing entries with pagination support."""
 
-        statement = select(func.count()).select_from(self.model)
-        count = await self._retrieve_one(statement)
+        count_statement = select(func.count()).select_from(self.model)
+        if filtering:
+            count_statement = filtering.apply(count_statement, self.model)
+        count = await self._retrieve_one(count_statement)
 
-        statement = select(self.model).limit(pagination.limit).offset(pagination.offset)
-        entries = await self._retrieve_many(statement)
+        entries_statement = select(self.model).limit(pagination.limit).offset(pagination.offset)
+        if sorting:
+            entries_statement = sorting.apply(entries_statement, self.model)
+        if filtering:
+            entries_statement = filtering.apply(entries_statement, self.model)
+        entries = await self._retrieve_many(entries_statement)
 
         return Page(pagination=pagination, count=count, entries=entries)
 
-    async def update(self, id_: UUID, entry_update: BaseSchema) -> DBModel:
+    async def update(self, id_: UUID, entry_update: BaseSchema, **kwds: Any) -> DBModel:
         """Update an existing entry attributes."""
 
         values = entry_update.dict(exclude_unset=True, exclude_defaults=True)
-        statement = update(self.model).where(self.model.id == id_).values(**values)
+        statement = update(self.model).where(self.model.id == id_).values(**(values | kwds))
         await self._update_one(statement)
 
         entry = await self.retrieve_by_id(id_)

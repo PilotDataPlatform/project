@@ -19,13 +19,13 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 
+from project.components.parameters import PageParameters
 from project.components.resource_request.crud import ResourceRequestCRUD
 from project.components.resource_request.dependencies import get_resource_request_crud
 from project.components.resource_request.schemas import ResourceRequestCreateSchema
 from project.components.resource_request.schemas import ResourceRequestListResponseSchema
 from project.components.resource_request.schemas import ResourceRequestResponseSchema
 from project.components.resource_request.schemas import ResourceRequestUpdateSchema
-from project.dependencies.parameters import PageParameters
 
 router = APIRouter(prefix='/resource-requests', tags=['Resource Requests'])
 

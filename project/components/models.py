@@ -13,17 +13,24 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from faker import Faker
+from typing import Any
+from typing import Optional
 
-from project.components.crud import CRUD
 
+class ModelList(list):
+    """Store a list of models of the same type."""
 
-class BaseFactory:
-    """Base class for creating testing purpose entries."""
+    def map_by_field(self, field: str, key_type: Optional[type] = None) -> dict[Any, Any]:
+        """Create map using field argument as key with optional type casting."""
 
-    crud: CRUD
-    fake: Faker
+        results = {}
 
-    def __init__(self, crud: CRUD, fake: Faker) -> None:
-        self.crud = crud
-        self.fake = fake
+        for source in self:
+            key = getattr(source, field)
+
+            if key_type is not None:
+                key = key_type(key)
+
+            results[key] = source
+
+        return results

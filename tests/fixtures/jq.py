@@ -13,17 +13,37 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from fastapi import Query
-from pydantic import BaseModel
+from typing import Any
+from typing import Type
 
-from project.components.pagination import Pagination
+import jq as json_processor
+import pytest
+from httpx import Response
 
 
-class PageParameters(BaseModel):
-    """Query parameters for pagination."""
+class JQResult:
+    """Typing for jq processor response."""
 
-    page: int = Query(default=0, ge=0)
-    page_size: int = Query(default=20, ge=1)
+    def all(self) -> list[Any]:
+        ...
 
-    def to_pagination(self) -> Pagination:
-        return Pagination(page=self.page, page_size=self.page_size)
+    def first(self) -> Any:
+        ...
+
+    def text(self) -> str:
+        ...
+
+
+class JQ:
+    """Perform jq queries against httpx json response."""
+
+    def __init__(self, response: Response) -> None:
+        self.json = response.json()
+
+    def __call__(self, query: str) -> JQResult:
+        return json_processor.compile(query).input(self.json)
+
+
+@pytest.fixture
+def jq() -> Type[JQ]:
+    yield JQ
