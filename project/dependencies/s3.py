@@ -37,4 +37,4 @@ async def get_s3_client(settings: Settings = Depends(get_settings)) -> S3Client:
         endpoint_url=settings.S3_ENDPOINT_URL,
         config=Config(signature_version='s3v4'),
     ) as client:
-        yield client
+        return client

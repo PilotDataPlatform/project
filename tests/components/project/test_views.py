@@ -178,7 +178,7 @@ class TestProjectViews:
         received_ids = body('.result[].id').all()
         received_total = body('.total').first()
 
-        assert received_ids == expected_ids
+        assert set(received_ids) == set(expected_ids)
         assert received_total == 2
 
     async def test_get_project_returns_project_by_id(self, client, project_factory):

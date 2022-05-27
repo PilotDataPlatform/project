@@ -46,6 +46,7 @@ def create_app() -> FastAPI:
         title='Project Service',
         description='Service for managing projects.',
         docs_url='/v1/api-doc',
+        redoc_url='/v1/api-redoc',
         version=settings.VERSION,
     )
 

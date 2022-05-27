@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     """Store service configuration settings."""
 
     APP_NAME: str = 'project'
-    VERSION: str = '0.1.0'
+    VERSION: str = '0.2.0'
     HOST: str = '127.0.0.1'
     PORT: int = 5064
     WORKERS: int = 1
@@ -43,8 +43,8 @@ class Settings(BaseSettings):
     RDS_ECHO_SQL_QUERIES: bool = False
 
     S3_ENDPOINT_URL: HttpUrl = 'http://127.0.0.1:9100'
-    S3_ACCESS_KEY: str = 'GMIMPKTWGOKHIQYYQHPO'
-    S3_SECRET_KEY: str = 'KLdvMcrHMVnar/HJGKVAS/TRglfFvzDrbYpdknbc'
+    S3_ACCESS_KEY: str = Field('GMIMPKTWGOKHIQYYQHPO', env={'S3_ACCESS_KEY', 'MINIO_ACCESS_KEY'})
+    S3_SECRET_KEY: str = Field('KLdvMcrHMVnar/HJGKVAS/TRglfFvzDrbYpdknbc', env={'S3_SECRET_KEY', 'MINIO_SECRET_KEY'})
     S3_BUCKET_FOR_PROJECT_LOGOS: str = 'project-logos'
     S3_PREFIX_FOR_PROJECT_IMAGE_URLS: HttpUrl = 'http://127.0.0.1:9100/project-logos'
 
