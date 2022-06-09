@@ -64,6 +64,7 @@ class TestWorkbenchViews:
         received_workbench = await workbench_crud.retrieve_by_id(received_workbench_id)
 
         assert received_workbench.resource == workbench.resource
+        assert received_workbench.deployed_at
 
     async def test_update_workbench_updates_workbench_field_by_id(
         self, client, jq, project_factory, workbench_factory, workbench_crud
