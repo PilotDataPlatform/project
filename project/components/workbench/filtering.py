@@ -22,8 +22,8 @@ from project.components.filtering import Filtering
 from project.components.workbench import Workbench
 
 
-class WorkbenchesFiltering(Filtering):
-    """Projects filtering control parameters."""
+class WorkbenchFiltering(Filtering):
+    """Workbenches filtering control parameters."""
 
     project_id: Optional[str] = None
 
