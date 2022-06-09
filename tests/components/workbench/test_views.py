@@ -48,6 +48,26 @@ class TestWorkbenchViews:
 
         assert received_workbench['id'] == str(created_workbench.id)
 
+
+    async def test_list_workbenches_returns_list_of_workbenches_filtered_by_project_id(
+        self, client, jq, project_factory, workbench_factory
+    ):
+        created_project1 = await project_factory.create()
+        created_project2 = await project_factory.create()
+        created_workbench1 = await workbench_factory.create(project_id=created_project1.id)
+        await workbench_factory.create(project_id=created_project2.id)
+
+        response = await client.get('/v1/workbenches/', params={'project_id': created_project1.id})
+
+        assert response.status_code == 200
+
+        body = jq(response)
+        received_workbench_id = body('.result[].id').first()
+        received_total = body('.total').first()
+        assert received_workbench_id == str(created_workbench1.id)
+        assert received_total == 1
+
+
     async def test_create_workbench_creates_new_workbench(
         self, client, jq, project_factory, workbench_factory, workbench_crud
     ):
