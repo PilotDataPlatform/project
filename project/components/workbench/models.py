@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy import VARCHAR
@@ -33,7 +34,7 @@ class Workbench(DBModel):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     project_id = Column(UUID(as_uuid=True), ForeignKey('projects.id'), nullable=False)
     resource = Column(VARCHAR(length=256), nullable=False)
-    deployed_at = Column(TIMESTAMP(timezone=True), nullable=True)
+    deployed_at = Column(TIMESTAMP(timezone=True), default=datetime.utcnow, nullable=False)
     deployed_by_user_id = Column(VARCHAR(length=256), nullable=False)
 
     project = relationship('Project', back_populates='workbenches')

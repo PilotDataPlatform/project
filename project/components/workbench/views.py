@@ -23,6 +23,7 @@ from fastapi.responses import Response
 from project.components.parameters import PageParameters
 from project.components.workbench.crud import WorkbenchCRUD
 from project.components.workbench.dependencies import get_workbench_crud
+from project.components.workbench.parameters import WorkbenchFilterParameters
 from project.components.workbench.schemas import WorkbenchCreateSchema
 from project.components.workbench.schemas import WorkbenchListResponseSchema
 from project.components.workbench.schemas import WorkbenchResponseSchema
@@ -33,14 +34,15 @@ router = APIRouter(prefix='/workbenches', tags=['Workbenches'])
 
 @router.get('/', summary='List all workbenches.', response_model=WorkbenchListResponseSchema)
 async def list_workbenches(
+    filter_parameters: WorkbenchFilterParameters = Depends(),
     page_parameters: PageParameters = Depends(),
     workbench_crud: WorkbenchCRUD = Depends(get_workbench_crud),
 ) -> WorkbenchListResponseSchema:
     """List all workbenches."""
-
+    filtering = filter_parameters.to_filtering()
     pagination = page_parameters.to_pagination()
 
-    page = await workbench_crud.paginate(pagination)
+    page = await workbench_crud.paginate(pagination, filtering=filtering)
 
     response = WorkbenchListResponseSchema.from_page(page)
 

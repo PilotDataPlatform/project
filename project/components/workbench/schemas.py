@@ -26,7 +26,6 @@ class WorkbenchSchema(BaseSchema):
 
     project_id: UUID
     resource: str = ''
-    deployed_at: datetime = None
     deployed_by_user_id: str = ''
 
 
@@ -42,6 +41,7 @@ class WorkbenchResponseSchema(WorkbenchSchema):
     """Default schema for single workbench in response."""
 
     id: UUID
+    deployed_at: datetime
 
     class Config:
         orm_mode = True
