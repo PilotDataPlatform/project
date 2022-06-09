@@ -13,8 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from uuid import uuid4
 from datetime import datetime
+from uuid import uuid4
 
 from sqlalchemy import VARCHAR
 from sqlalchemy import Column
@@ -22,7 +22,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 
 from project.components.db_model import DBModel
 

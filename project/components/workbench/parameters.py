@@ -13,15 +13,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
-from email.policy import default
-from lib2to3.pgen2.token import OP
 from typing import Optional
 
 from fastapi import Query
-from pydantic import validator
 
-from project.components.parameters import FilterParameters
 from project.components.workbench.filtering import WorkbenchFiltering
 
 

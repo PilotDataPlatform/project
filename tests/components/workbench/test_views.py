@@ -48,7 +48,6 @@ class TestWorkbenchViews:
 
         assert received_workbench['id'] == str(created_workbench.id)
 
-
     async def test_list_workbenches_returns_list_of_workbenches_filtered_by_project_id(
         self, client, jq, project_factory, workbench_factory
     ):
@@ -66,7 +65,6 @@ class TestWorkbenchViews:
         received_total = body('.total').first()
         assert received_workbench_id == str(created_workbench1.id)
         assert received_total == 1
-
 
     async def test_create_workbench_creates_new_workbench(
         self, client, jq, project_factory, workbench_factory, workbench_crud
