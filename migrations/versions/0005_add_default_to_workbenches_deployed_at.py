@@ -16,7 +16,7 @@ depends_on = '0004'
 
 
 def upgrade():
-    op.execute("UPDATE project.workbenches SET deployed_at = now();")
+    op.execute("UPDATE project.workbenches SET deployed_at = (now() at time zone 'utc');")
     op.alter_column('workbenches', 'deployed_at',
         existing_type=postgresql.TIMESTAMP(timezone=True),
         server_default=sa.text("(now() at time zone 'utc')"),
