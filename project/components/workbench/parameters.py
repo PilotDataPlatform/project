@@ -17,15 +17,15 @@ from typing import Optional
 
 from fastapi import Query
 
-from project.components.workbench.filtering import WorkbenchFiltering
+from project.components.workbench.filtering import WorkbenchesFiltering
 
 
-class WorkbenchFilterParameters(WorkbenchFiltering):
+class WorkbenchFilterParameters(WorkbenchesFiltering):
     """Query parameters for workbench filtering."""
 
     project_id: Optional[str] = Query(default=None)
 
-    def to_filtering(self) -> WorkbenchFiltering:
-        return WorkbenchFiltering(
+    def to_filtering(self) -> WorkbenchesFiltering:
+        return WorkbenchesFiltering(
             project_id=self.project_id,
         )

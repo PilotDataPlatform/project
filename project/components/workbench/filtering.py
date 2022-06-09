@@ -22,7 +22,7 @@ from project.components.filtering import Filtering
 from project.components.workbench import Workbench
 
 
-class WorkbenchFiltering(Filtering):
+class WorkbenchesFiltering(Filtering):
     """Projects filtering control parameters."""
 
     project_id: Optional[str] = None

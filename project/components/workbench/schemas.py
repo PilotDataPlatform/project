@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
 from uuid import UUID
 
 from project.components.schemas import BaseSchema
@@ -26,7 +25,6 @@ class WorkbenchSchema(BaseSchema):
 
     project_id: UUID
     resource: str = ''
-    deployed_at: datetime = None
     deployed_by_user_id: str = ''
 
 
