@@ -25,6 +25,11 @@ Service for managing projects and project related resources.
 
        poetry install
 
+    2.1. For Mac Users:
+
+        brew install libmagic
+
+
 3. Add environment variables into `.env`.
 4. Run application.
 
