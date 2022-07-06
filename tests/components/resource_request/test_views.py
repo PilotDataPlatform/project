@@ -74,7 +74,7 @@ class TestResourceRequestViews:
         created_resource_request = await resource_request_factory.create(project_id=created_project.id)
         resource_request = resource_request_factory.generate()
 
-        payload = {'requested_by_user_id': resource_request.requested_by_user_id}
+        payload = {'user_id': resource_request.user_id}
         response = await client.patch(f'/v1/resource-requests/{created_resource_request.id}', json=payload)
 
         assert response.status_code == 200
@@ -83,7 +83,7 @@ class TestResourceRequestViews:
         received_resource_request_id = body('.id').first()
         received_resource_request = await resource_request_crud.retrieve_by_id(received_resource_request_id)
 
-        assert received_resource_request.requested_by_user_id == resource_request.requested_by_user_id
+        assert received_resource_request.user_id == resource_request.user_id
 
     async def test_delete_resource_request(
         self, client, project_factory, resource_request_factory, resource_request_crud
