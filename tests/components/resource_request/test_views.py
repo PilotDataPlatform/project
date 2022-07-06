@@ -28,12 +28,13 @@ class TestResourceRequestViews:
         response = await client.get('/v1/resource-requests/')
 
         assert response.status_code == 200
-
         body = jq(response)
         received_resource_request_id = body('.result[].id').first()
+        received_resource_request_project = body('.result[].project').first()
         received_total = body('.total').first()
 
         assert received_resource_request_id == str(created_resource_request.id)
+        assert received_resource_request_project == created_resource_request.project.name
         assert received_total == 1
 
     async def test_get_resource_request_returns_resource_request_by_id(
@@ -49,6 +50,7 @@ class TestResourceRequestViews:
         received_resource_request = response.json()
 
         assert received_resource_request['id'] == str(created_resource_request.id)
+        assert received_resource_request['project'] == created_resource_request.project.name
 
     async def test_create_resource_request_creates_new_resource_request(
         self, client, jq, project_factory, resource_request_factory, resource_request_crud

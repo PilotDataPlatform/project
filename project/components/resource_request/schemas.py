@@ -14,8 +14,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
+from typing import Union
 from uuid import UUID
 
+from pydantic import validator
+
+from project.components.project.schemas import ProjectResponseSchema
 from project.components.schemas import BaseSchema
 from project.components.schemas import ListResponseSchema
 from project.components.schemas import ParentOptionalFields
@@ -42,9 +46,16 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
     """Default schema for single resource request in response."""
 
     id: UUID
+    project: Union[ProjectResponseSchema, str]
 
     class Config:
         orm_mode = True
+
+    @validator('project')
+    def remove_project_value(cls, v: ProjectResponseSchema):
+        if isinstance(v, str):
+            return v
+        return v.name
 
 
 class ResourceRequestListResponseSchema(ListResponseSchema):
