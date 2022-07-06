@@ -27,10 +27,10 @@ class ResourceRequestSchema(BaseSchema):
     """General resource request schema."""
 
     project_id: UUID
-    user_id: str = ''
-    email: EmailStr = ''
-    username: str = ''
-    requested_for: str = ''
+    user_id: str
+    email: EmailStr
+    username: str
+    requested_for: str
     completed_at: datetime = None
 
 

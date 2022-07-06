@@ -31,6 +31,14 @@ class ResourceRequest(DBModel):
     """Resource request database model."""
 
     __tablename__ = 'resource_requests'
+    __table_args__ = (
+        Index(
+            'user_id',
+            'project_id',
+            'requested_for',
+            unique=True,
+        ),
+    )
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     project_id = Column(UUID(as_uuid=True), ForeignKey('projects.id'), nullable=False)
@@ -42,13 +50,3 @@ class ResourceRequest(DBModel):
     completed_at = Column(TIMESTAMP(timezone=True), nullable=True)
 
     project = relationship('Project', back_populates='resource_requests')
-
-    __table_args__ = (
-        Index(
-            'user_id',
-            'project_id',
-            'requested_for',
-            unique=True,
-        ),
-        {'schema': 'project'},
-    )
