@@ -20,8 +20,10 @@ from fastapi import Depends
 from fastapi.responses import Response
 
 from project.components.parameters import PageParameters
+from project.components.parameters import SortParameters
 from project.components.resource_request.crud import ResourceRequestCRUD
 from project.components.resource_request.dependencies import get_resource_request_crud
+from project.components.resource_request.parameters import ResourceRequestSortByFields
 from project.components.resource_request.schemas import ResourceRequestCreateSchema
 from project.components.resource_request.schemas import ResourceRequestListResponseSchema
 from project.components.resource_request.schemas import ResourceRequestResponseSchema
@@ -33,13 +35,15 @@ router = APIRouter(prefix='/resource-requests', tags=['Resource Requests'])
 @router.get('/', summary='List all resource requests.', response_model=ResourceRequestListResponseSchema)
 async def list_resource_requests(
     page_parameters: PageParameters = Depends(),
+    sort_parameters: SortParameters.with_sort_by_fields(ResourceRequestSortByFields) = Depends(),
     resource_request_crud: ResourceRequestCRUD = Depends(get_resource_request_crud),
 ) -> ResourceRequestListResponseSchema:
     """List all resource requests."""
 
+    sorting = sort_parameters.to_sorting()
     pagination = page_parameters.to_pagination()
 
-    page = await resource_request_crud.paginate(pagination)
+    page = await resource_request_crud.paginate(pagination, sorting)
 
     response = ResourceRequestListResponseSchema.from_page(page)
 
