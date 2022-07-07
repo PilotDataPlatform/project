@@ -76,7 +76,7 @@ class TestResourceRequestViews:
         created_resource_request = await resource_request_factory.create(project_id=created_project.id)
         resource_request = resource_request_factory.generate()
 
-        payload = {'requested_by_user_id': resource_request.requested_by_user_id}
+        payload = {'user_id': resource_request.user_id}
         response = await client.patch(f'/v1/resource-requests/{created_resource_request.id}', json=payload)
 
         assert response.status_code == 200
@@ -85,7 +85,7 @@ class TestResourceRequestViews:
         received_resource_request_id = body('.id').first()
         received_resource_request = await resource_request_crud.retrieve_by_id(received_resource_request_id)
 
-        assert received_resource_request.requested_by_user_id == resource_request.requested_by_user_id
+        assert received_resource_request.user_id == resource_request.user_id
 
     async def test_delete_resource_request(
         self, client, project_factory, resource_request_factory, resource_request_crud
@@ -124,3 +124,19 @@ class TestResourceRequestViews:
 
         assert set(received_fields) == set(expected_fields)
         assert received_total == 3
+
+    async def test_create_resource_request_returns_conflict_when_resource_from_same_user_to_same_project_exists(
+        self, client, project_factory, resource_request_factory
+    ):
+        created_project = await project_factory.create()
+        old_request_resource = await resource_request_factory.create(project_id=created_project.id)
+        resource_request = resource_request_factory.generate(
+            project_id=created_project.id,
+            user_id=old_request_resource.user_id,
+            requested_for=old_request_resource.requested_for,
+        )
+
+        payload = resource_request.to_payload()
+        response = await client.post('/v1/resource-requests/', json=payload)
+
+        assert response.status_code == 409
