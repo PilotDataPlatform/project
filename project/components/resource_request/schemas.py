@@ -42,6 +42,7 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
     """Default schema for single resource request in response."""
 
     id: UUID
+    requested_at: datetime
 
     class Config:
         orm_mode = True

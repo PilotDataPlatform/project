@@ -24,3 +24,4 @@ class ResourceRequestSortByFields(SortByFields):
     REQUESTED_BY_USER_ID = 'requested_by_user_id'
     REQUESTED_FOR = 'requested_for'
     COMPLETED_AT = 'completed_at'
+    REQUESTED_AT = 'requested_at'

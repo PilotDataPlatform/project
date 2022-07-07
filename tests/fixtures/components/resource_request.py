@@ -14,11 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 import pytest
 
 from project.components import ResourceRequest
+from project.components.models import ModelList
 from project.components.resource_request.crud import ResourceRequestCRUD
 from project.components.resource_request.schemas import ResourceRequestSchema
 from tests.fixtures.components._base_factory import BaseFactory
@@ -64,6 +66,22 @@ class ResourceRequestFactory(BaseFactory):
 
         async with self.crud:
             return await self.crud.create(entry)
+
+    async def bulk_create(
+        self,
+        number: int,
+        project_id: UUID = ...,
+        requested_by_user_id: str = ...,
+        requested_for: str = ...,
+        completed_at: datetime = ...,
+        **kwds: Any,
+    ) -> ModelList[ResourceRequest]:
+        return ModelList(
+            [
+                await self.create(project_id, requested_by_user_id, requested_for, completed_at, **kwds)
+                for _ in range(number)
+            ]
+        )
 
 
 @pytest.fixture
