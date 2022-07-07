@@ -21,6 +21,7 @@ pydantic = "1.8.2"
 python-magic = "0.4.25"
 sqlalchemy = "1.4.32"
 uvicorn = { extras = ["standard"], version = "0.17.6" }
+email-validator = "1.2.1"
 
 [tool.poetry.dev-dependencies]
 alembic = "1.7.7"

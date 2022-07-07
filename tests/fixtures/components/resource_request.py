@@ -30,15 +30,23 @@ class ResourceRequestFactory(BaseFactory):
     def generate(
         self,
         project_id: UUID = ...,
-        requested_by_user_id: str = ...,
+        user_id: str = ...,
+        username: str = ...,
+        email: str = ...,
         requested_for: str = ...,
         completed_at: datetime = ...,
     ) -> ResourceRequestSchema:
         if project_id is ...:
             project_id = self.fake.uuid4(cast_to=None)
 
-        if requested_by_user_id is ...:
-            requested_by_user_id = self.fake.uuid4()
+        if user_id is ...:
+            user_id = self.fake.uuid4()
+
+        if username is ...:
+            username = self.fake.simple_profile()['username']
+
+        if email is ...:
+            email = self.fake.email()
 
         if requested_for is ...:
             requested_for = self.fake.slug()
@@ -48,7 +56,9 @@ class ResourceRequestFactory(BaseFactory):
 
         return ResourceRequestSchema(
             project_id=project_id,
-            requested_by_user_id=requested_by_user_id,
+            user_id=user_id,
+            email=email,
+            username=username,
             requested_for=requested_for,
             completed_at=completed_at,
         )
@@ -56,11 +66,13 @@ class ResourceRequestFactory(BaseFactory):
     async def create(
         self,
         project_id: UUID = ...,
-        requested_by_user_id: str = ...,
+        user_id: str = ...,
+        username: str = ...,
+        email: str = ...,
         requested_for: str = ...,
         completed_at: datetime = ...,
     ) -> ResourceRequest:
-        entry = self.generate(project_id, requested_by_user_id, requested_for, completed_at)
+        entry = self.generate(project_id, user_id, username, email, requested_for, completed_at)
 
         async with self.crud:
             return await self.crud.create(entry)
