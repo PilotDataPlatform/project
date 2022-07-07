@@ -22,6 +22,8 @@ class ResourceRequestSortByFields(SortByFields):
 
     PROJECT_ID = 'project_id'
     USER_ID = 'user_id'
+    USERNAME = 'username'
+    EMAIL = 'email'
     REQUESTED_FOR = 'requested_for'
     COMPLETED_AT = 'completed_at'
     REQUESTED_AT = 'requested_at'
