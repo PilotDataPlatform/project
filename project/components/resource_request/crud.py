@@ -25,6 +25,7 @@ from project.components.db_model import DBModel
 from project.components.filtering import Filtering
 from project.components.pagination import Page
 from project.components.pagination import Pagination
+from project.components.project.models import Project
 from project.components.resource_request.models import ResourceRequest
 from project.components.sorting import Sorting
 
@@ -53,12 +54,17 @@ class ResourceRequestCRUD(CRUD):
 
         entries_statement = (
             select(self.model)
+            .join(Project)
             .options(selectinload(self.model.project))
             .limit(pagination.limit)
             .offset(pagination.offset)
         )
         if sorting:
-            entries_statement = sorting.apply(entries_statement, self.model)
+            if sorting.field == 'project':
+                sorting.field = 'name'
+                entries_statement = sorting.apply(entries_statement, Project)
+            else:
+                entries_statement = sorting.apply(entries_statement, self.model)
         if filtering:
             entries_statement = filtering.apply(entries_statement, self.model)
         entries = await self._retrieve_many(entries_statement)

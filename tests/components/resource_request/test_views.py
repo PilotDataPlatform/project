@@ -116,6 +116,8 @@ class TestResourceRequestViews:
             mapping_keys = [key.isoformat() for key in mapping_keys]
         if sort_by == 'project_id':
             mapping_keys = [str(key) for key in mapping_keys]
+        if sort_by == 'project':
+            mapping_keys = [key.name for key in mapping_keys]
         expected_fields = sorted(mapping_keys, reverse=sort_order == SortingOrder.DESC)
 
         response = await client.get('/v1/resource-requests/', params={'sort_by': sort_by, 'sort_order': sort_order})
