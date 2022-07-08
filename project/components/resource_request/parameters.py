@@ -27,4 +27,5 @@ class ResourceRequestSortByFields(SortByFields):
     REQUESTED_FOR = 'requested_for'
     COMPLETED_AT = 'completed_at'
     REQUESTED_AT = 'requested_at'
-    PROJECT = 'project'
+    PROJECT_NAME = 'project.name'
+    PROJECT_CODE = 'project.code'

@@ -24,9 +24,13 @@ class ModelList(list):
         """Create map using field argument as key with optional type casting."""
 
         results = {}
-
         for source in self:
-            key = getattr(source, field)
+            try:
+                key = getattr(source, field)
+            except AttributeError:
+                relationship, relationship_field = field.split('.')
+                key = getattr(source, relationship)
+                key = getattr(key, relationship_field)
 
             if key_type is not None:
                 key = key_type(key)

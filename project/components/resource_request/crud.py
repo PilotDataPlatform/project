@@ -60,10 +60,11 @@ class ResourceRequestCRUD(CRUD):
             .offset(pagination.offset)
         )
         if sorting:
-            if sorting.field == 'project':
-                sorting.field = 'name'
+            try:
+                _, relationship_field = sorting.field.split('.')
+                sorting.field = relationship_field
                 entries_statement = sorting.apply(entries_statement, Project)
-            else:
+            except ValueError:
                 entries_statement = sorting.apply(entries_statement, self.model)
         if filtering:
             entries_statement = filtering.apply(entries_statement, self.model)
