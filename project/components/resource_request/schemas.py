@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
+from typing import Dict
 from typing import Union
 from uuid import UUID
 
@@ -49,16 +50,16 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
     """Default schema for single resource request in response."""
 
     id: UUID
-    project: Union[ProjectResponseSchema, str]
+    project: Union[ProjectResponseSchema, Dict[str, str]]
 
     class Config:
         orm_mode = True
 
     @validator('project')
     def remove_project_value(cls, v: ProjectResponseSchema):
-        if isinstance(v, str):
+        if isinstance(v, dict):
             return v
-        return v.name
+        return {'name': v.name, 'code': v.code}
 
 
 class ResourceRequestListResponseSchema(ListResponseSchema):
