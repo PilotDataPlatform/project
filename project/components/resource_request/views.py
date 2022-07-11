@@ -57,7 +57,6 @@ async def get_resource_request(
     """Get a resource request by id."""
 
     resource_request = await resource_request_crud.retrieve_by_id(resource_request_id)
-
     return resource_request
 
 

@@ -34,6 +34,16 @@ class ResourceRequestSchema(BaseSchema):
     completed_at: datetime = None
 
 
+class EmbeddedProjectSchema(BaseSchema):
+    """Project schema embedded into resource request."""
+
+    code: str
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 class ResourceRequestCreateSchema(ResourceRequestSchema):
     """Resource request schema used for creation."""
 
@@ -46,6 +56,7 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
     """Default schema for single resource request in response."""
 
     id: UUID
+    project: EmbeddedProjectSchema
 
     class Config:
         orm_mode = True
