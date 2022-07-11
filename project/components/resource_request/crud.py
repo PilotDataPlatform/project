@@ -14,14 +14,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import Optional
-from uuid import UUID
 
 from sqlalchemy import func
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
 
 from project.components.crud import CRUD
-from project.components.db_model import DBModel
 from project.components.filtering import Filtering
 from project.components.pagination import Page
 from project.components.pagination import Pagination
@@ -35,13 +32,6 @@ class ResourceRequestCRUD(CRUD):
 
     model = ResourceRequest
 
-    async def retrieve_by_id(self, id_: UUID) -> DBModel:
-        """Get an existing entry by id (primary key)."""
-        statement = select(self.model).options(selectinload(self.model.project)).where(self.model.id == id_)
-        entry = await self._retrieve_one(statement)
-
-        return entry
-
     async def paginate(
         self, pagination: Pagination, sorting: Optional[Sorting] = None, filtering: Optional[Filtering] = None
     ) -> Page:
@@ -52,13 +42,7 @@ class ResourceRequestCRUD(CRUD):
             count_statement = filtering.apply(count_statement, self.model)
         count = await self._retrieve_one(count_statement)
 
-        entries_statement = (
-            select(self.model)
-            .join(Project)
-            .options(selectinload(self.model.project))
-            .limit(pagination.limit)
-            .offset(pagination.offset)
-        )
+        entries_statement = select(self.model).join(Project).limit(pagination.limit).offset(pagination.offset)
         if sorting:
             try:
                 _, relationship_field = sorting.field.split('.')
