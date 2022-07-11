@@ -14,14 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from typing import Dict
-from typing import Union
 from uuid import UUID
 
 from pydantic import EmailStr
-from pydantic import validator
 
-from project.components.project.schemas import ProjectResponseSchema
 from project.components.schemas import BaseSchema
 from project.components.schemas import ListResponseSchema
 from project.components.schemas import ParentOptionalFields
@@ -38,6 +34,16 @@ class ResourceRequestSchema(BaseSchema):
     completed_at: datetime = None
 
 
+class EmbeddedProjectSchema(BaseSchema):
+    """Project schema embedded into resource request."""
+
+    code: str
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 class ResourceRequestCreateSchema(ResourceRequestSchema):
     """Resource request schema used for creation."""
 
@@ -50,16 +56,10 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
     """Default schema for single resource request in response."""
 
     id: UUID
-    project: Union[ProjectResponseSchema, Dict[str, str]]
+    project: EmbeddedProjectSchema
 
     class Config:
         orm_mode = True
-
-    @validator('project')
-    def remove_project_value(cls, v: ProjectResponseSchema):
-        if isinstance(v, dict):
-            return v
-        return {'name': v.name, 'code': v.code}
 
 
 class ResourceRequestListResponseSchema(ListResponseSchema):
