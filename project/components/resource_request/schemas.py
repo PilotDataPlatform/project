@@ -14,8 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from typing import Dict
-from typing import Union
 from uuid import UUID
 
 from pydantic import EmailStr
@@ -38,6 +36,16 @@ class ResourceRequestSchema(BaseSchema):
     completed_at: datetime = None
 
 
+class EmbeddedProjectSchema(BaseSchema):
+    """Project schema embedded into resource request."""
+
+    code: str
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
 class ResourceRequestCreateSchema(ResourceRequestSchema):
     """Resource request schema used for creation."""
 
@@ -50,8 +58,7 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
     """Default schema for single resource request in response."""
 
     id: UUID
-    requested_at: datetime
-    project: Union[ProjectResponseSchema, Dict[str, str]]
+    project: EmbeddedProjectSchema
 
     class Config:
         orm_mode = True
