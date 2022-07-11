@@ -17,9 +17,7 @@ from datetime import datetime
 from uuid import UUID
 
 from pydantic import EmailStr
-from pydantic import validator
 
-from project.components.project.schemas import ProjectResponseSchema
 from project.components.schemas import BaseSchema
 from project.components.schemas import ListResponseSchema
 from project.components.schemas import ParentOptionalFields
@@ -63,12 +61,6 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
 
     class Config:
         orm_mode = True
-
-    @validator('project')
-    def remove_project_value(cls, v: ProjectResponseSchema):
-        if isinstance(v, dict):
-            return v
-        return {'name': v.name, 'code': v.code}
 
 
 class ResourceRequestListResponseSchema(ListResponseSchema):
