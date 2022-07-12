@@ -20,21 +20,27 @@ from typing import Optional
 class ModelList(list):
     """Store a list of models of the same type."""
 
+    def _get_nested_field(self, source, key):
+        try:
+            relationship, relationship_field = key.split('.', 1)
+            source = getattr(source, relationship)
+            return self._get_nested_field(source, relationship_field)
+        except ValueError:
+            return getattr(source, key)
+
     def map_by_field(self, field: str, key_type: Optional[type] = None) -> dict[Any, Any]:
         """Create map using field argument as key with optional type casting."""
 
         results = {}
         for source in self:
-            try:
-                key = getattr(source, field)
-            except AttributeError:
-                relationship, relationship_field = field.split('.')
-                key = getattr(source, relationship)
-                key = getattr(key, relationship_field)
-
-            if key_type is not None:
-                key = key_type(key)
-
+            key = self._get_nested_field(source, field)
             results[key] = source
 
         return results
+
+    def get_field_values(self, field: str) -> list[Any]:
+        """Return list with values each model has in field attribute."""
+        field_values_list = []
+        for source in self:
+            field_values_list.append(self._get_nested_field(source, field))
+        return field_values_list
