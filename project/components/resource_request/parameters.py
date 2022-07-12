@@ -15,6 +15,8 @@
 
 
 from project.components.parameters import SortByFields
+from project.components.parameters import SortParameters
+from project.components.resource_request.sorting import ResourceRequestSorting
 
 
 class ResourceRequestSortByFields(SortByFields):
@@ -29,3 +31,15 @@ class ResourceRequestSortByFields(SortByFields):
     REQUESTED_AT = 'requested_at'
     PROJECT_NAME = 'project.name'
     PROJECT_CODE = 'project.code'
+
+
+class ResourceRequestSortParameters(SortParameters):
+    """Base query parameters for sorting."""
+
+    def to_sorting(self) -> ResourceRequestSorting:
+        field = self.sort_by
+
+        if isinstance(field, SortByFields):
+            field = field.value
+
+        return ResourceRequestSorting(field=field, order=self.sort_order)
