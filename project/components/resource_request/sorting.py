@@ -15,12 +15,15 @@
 
 from typing import Type
 
+from sqlalchemy import asc
+from sqlalchemy import desc
 from sqlalchemy.sql import Select
 
 from project.components import DBModel
 from project.components.project.models import Project
 from project.components.resource_request.models import ResourceRequest
 from project.components.sorting import Sorting
+from project.components.sorting import SortingOrder
 
 
 class ResourceRequestSorting(Sorting):
@@ -34,4 +37,11 @@ class ResourceRequestSorting(Sorting):
             model = Project
         except ValueError:
             model = ResourceRequest
-        return super(ResourceRequestSorting, self).apply(statement, model)
+
+        field = getattr(model, self.field)
+
+        order_by = asc(field)
+        if self.order is SortingOrder.DESC:
+            order_by = desc(field)
+
+        return statement.order_by(order_by)

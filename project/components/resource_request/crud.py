@@ -13,7 +13,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from sqlalchemy.future import select
+
 from project.components.crud import CRUD
+from project.components.project.models import Project
 from project.components.resource_request.models import ResourceRequest
 
 
@@ -21,3 +24,7 @@ class ResourceRequestCRUD(CRUD):
     """CRUD for managing resource request database models."""
 
     model = ResourceRequest
+
+    @property
+    def select_query(self):
+        return select(self.model).join(Project)
