@@ -20,13 +20,13 @@ from typing import Optional
 class ModelList(list):
     """Store a list of models of the same type."""
 
-    def _get_nested_field(self, source, key):
+    def _get_nested_field(self, source, field):
         try:
-            relationship, relationship_field = key.split('.', 1)
+            relationship, relationship_field = field.split('.', 1)
             source = getattr(source, relationship)
             return self._get_nested_field(source, relationship_field)
         except ValueError:
-            return getattr(source, key)
+            return getattr(source, field)
 
     def map_by_field(self, field: str, key_type: Optional[type] = None) -> dict[Any, Any]:
         """Create map using field argument as key with optional type casting."""
@@ -34,6 +34,10 @@ class ModelList(list):
         results = {}
         for source in self:
             key = self._get_nested_field(source, field)
+
+            if key_type is not None:
+                key = key_type(key)
+
             results[key] = source
 
         return results
