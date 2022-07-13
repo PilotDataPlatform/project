@@ -24,7 +24,10 @@ class ResourceRequestSorting(Sorting):
     """Resource request sorting control parameters."""
 
     def apply(self, statement: Select, model: ResourceRequest) -> Select:
-        """Return statement with applied ordering."""
+        """Return statement with applied ordering.
+
+        This is necessary to allow sorting by fields from the the relationship model.
+        """
         try:
             _, relationship_field = self.field.split('.')
             self.field = relationship_field
