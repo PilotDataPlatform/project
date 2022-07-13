@@ -29,7 +29,7 @@ class ResourceRequestSorting(Sorting):
         This is necessary to allow sorting by fields from the the relationship model.
         """
         try:
-            _, relationship_field = self.field.split('.')
+            _, relationship_field = self.field.split('.', 1)
             self.field = relationship_field
             model = Project
         except ValueError:
