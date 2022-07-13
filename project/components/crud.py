@@ -68,6 +68,7 @@ class CRUD:
 
     @property
     def select_query(self) -> select:
+        """Create base select."""
         return select(self.model)
 
     async def execute(self, statement: Executable, **kwds: Any) -> Union[CursorResult, Result]:
