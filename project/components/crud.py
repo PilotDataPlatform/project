@@ -51,10 +51,6 @@ class CRUD:
         self.session = db_session
         self.transaction = None
 
-    @property
-    def select_query(self):
-        return select(self.model)
-
     async def __aenter__(self) -> 'CRUD':
         """Start a new transaction."""
 
@@ -69,6 +65,10 @@ class CRUD:
         await self.transaction.__aexit__(*args)
 
         return None
+
+    @property
+    def select_query(self) -> select:
+        return select(self.model)
 
     async def execute(self, statement: Executable, **kwds: Any) -> Union[CursorResult, Result]:
         """Execute a statement and return buffered result."""

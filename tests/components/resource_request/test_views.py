@@ -120,17 +120,15 @@ class TestResourceRequestViews:
             field_values = [key.isoformat() for key in field_values]
         if sort_by == 'project_id':
             field_values = [str(key) for key in field_values]
-        if sort_by in ('created_time', 'last_updated_time'):
-            field_values = [key.isoformat() for key in field_values]
         expected_values = sorted(field_values, reverse=sort_order == SortingOrder.DESC)
 
         response = await client.get('/v1/resource-requests/', params={'sort_by': sort_by, 'sort_order': sort_order})
 
         body = jq(response)
-        received_fields = body(f'.result[].{sort_by}').all()
+        received_values = body(f'.result[].{sort_by}').all()
         received_total = body('.total').first()
 
-        assert received_fields == expected_values
+        assert received_values == expected_values
         assert received_total == 3
 
     async def test_create_resource_request_returns_conflict_when_resource_from_same_user_to_same_project_exists(

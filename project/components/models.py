@@ -16,13 +16,16 @@
 from typing import Any
 from typing import Optional
 
+from project.components.db_model import DBModel
+
 
 class ModelList(list):
     """Store a list of models of the same type."""
 
-    def _get_nested_field(self, source, field):
+    def _get_nested_field(self, source: DBModel, field: str) -> Any:
+        """Return field value for any level of field in model."""
         try:
-            relationship, relationship_field = field.split('.', 1)
+            relationship, relationship_field = field.split('.')
             source = getattr(source, relationship)
             return self._get_nested_field(source, relationship_field)
         except ValueError:

@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from sqlalchemy.future import select
+from sqlalchemy.orm import contains_eager
 
 from project.components.crud import CRUD
 from project.components.project.models import Project
@@ -27,4 +28,5 @@ class ResourceRequestCRUD(CRUD):
 
     @property
     def select_query(self):
-        return select(self.model).join(Project)
+        """Return base select including join with Project model."""
+        return select(self.model).join(Project).options(contains_eager(self.model.project))

@@ -13,35 +13,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Type
-
-from sqlalchemy import asc
-from sqlalchemy import desc
 from sqlalchemy.sql import Select
 
-from project.components import DBModel
 from project.components.project.models import Project
 from project.components.resource_request.models import ResourceRequest
 from project.components.sorting import Sorting
-from project.components.sorting import SortingOrder
 
 
 class ResourceRequestSorting(Sorting):
-    """Resource Request sorting control parameters."""
+    """Resource request sorting control parameters."""
 
-    def apply(self, statement: Select, model: Type[DBModel]) -> Select:
+    def apply(self, statement: Select, model: ResourceRequest) -> Select:
         """Return statement with applied ordering."""
         try:
             _, relationship_field = self.field.split('.')
             self.field = relationship_field
             model = Project
         except ValueError:
-            model = ResourceRequest
-
-        field = getattr(model, self.field)
-
-        order_by = asc(field)
-        if self.order is SortingOrder.DESC:
-            order_by = desc(field)
-
-        return statement.order_by(order_by)
+            pass
+        return super().apply(statement, model)
