@@ -30,6 +30,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.sql import Executable
+from sqlalchemy.sql import Select
 
 from project.components.db_model import DBModel
 from project.components.exceptions import AlreadyExists
@@ -67,7 +68,7 @@ class CRUD:
         return None
 
     @property
-    def select_query(self) -> select:
+    def select_query(self) -> Select:
         """Create base select."""
         return select(self.model)
 

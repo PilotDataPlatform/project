@@ -15,6 +15,7 @@
 
 from sqlalchemy.future import select
 from sqlalchemy.orm import contains_eager
+from sqlalchemy.sql import Select
 
 from project.components.crud import CRUD
 from project.components.project.models import Project
@@ -27,6 +28,6 @@ class ResourceRequestCRUD(CRUD):
     model = ResourceRequest
 
     @property
-    def select_query(self):
+    def select_query(self) -> Select:
         """Return base select including join with Project model."""
         return select(self.model).join(Project).options(contains_eager(self.model.project))

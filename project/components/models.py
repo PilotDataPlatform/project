@@ -25,7 +25,7 @@ class ModelList(list):
     def _get_nested_field(self, source: DBModel, field: str) -> Any:
         """Return field value for any level of field in model."""
         try:
-            relationship, relationship_field = field.split('.')
+            relationship, relationship_field = field.split('.', 1)
             source = getattr(source, relationship)
             return self._get_nested_field(source, relationship_field)
         except ValueError:
