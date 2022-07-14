@@ -30,6 +30,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.sql import Executable
+from sqlalchemy.sql import Select
 
 from project.components.db_model import DBModel
 from project.components.exceptions import AlreadyExists
@@ -65,6 +66,11 @@ class CRUD:
         await self.transaction.__aexit__(*args)
 
         return None
+
+    @property
+    def select_query(self) -> Select:
+        """Create base select."""
+        return select(self.model)
 
     async def execute(self, statement: Executable, **kwds: Any) -> Union[CursorResult, Result]:
         """Execute a statement and return buffered result."""
@@ -135,7 +141,7 @@ class CRUD:
     async def retrieve_by_id(self, id_: UUID) -> DBModel:
         """Get an existing entry by id (primary key)."""
 
-        statement = select(self.model).where(self.model.id == id_)
+        statement = self.select_query.where(self.model.id == id_)
         entry = await self._retrieve_one(statement)
 
         return entry
@@ -143,7 +149,7 @@ class CRUD:
     async def list(self) -> list[DBModel]:
         """Get all existing entries."""
 
-        statement = select(self.model)
+        statement = self.select_query
         entries = await self._retrieve_many(statement)
 
         return entries
@@ -158,7 +164,7 @@ class CRUD:
             count_statement = filtering.apply(count_statement, self.model)
         count = await self._retrieve_one(count_statement)
 
-        entries_statement = select(self.model).limit(pagination.limit).offset(pagination.offset)
+        entries_statement = self.select_query.limit(pagination.limit).offset(pagination.offset)
         if sorting:
             entries_statement = sorting.apply(entries_statement, self.model)
         if filtering:

@@ -49,4 +49,4 @@ class ResourceRequest(DBModel):
     requested_at = Column(TIMESTAMP(timezone=True), default=datetime.utcnow, nullable=False)
     completed_at = Column(TIMESTAMP(timezone=True), nullable=True)
 
-    project = relationship('Project', back_populates='resource_requests', lazy='joined')
+    project = relationship('Project', back_populates='resource_requests')

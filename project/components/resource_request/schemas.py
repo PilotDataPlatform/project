@@ -57,6 +57,7 @@ class ResourceRequestResponseSchema(ResourceRequestSchema):
 
     id: UUID
     project: EmbeddedProjectSchema
+    requested_at: datetime
 
     class Config:
         orm_mode = True

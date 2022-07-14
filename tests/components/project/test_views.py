@@ -46,19 +46,18 @@ class TestProjectViews:
         self, sort_by, sort_order, client, jq, project_factory
     ):
         created_projects = await project_factory.bulk_create(3)
-        mapping = created_projects.map_by_field(sort_by)
-        mapping_keys = mapping.keys()
+        field_values = created_projects.get_field_values(sort_by)
         if sort_by == 'created_at':
-            mapping_keys = [key.isoformat() for key in mapping_keys]
-        expected_fields = sorted(mapping_keys, reverse=sort_order == SortingOrder.DESC)
+            field_values = [key.isoformat() for key in field_values]
+        expected_values = sorted(field_values, reverse=sort_order == SortingOrder.DESC)
 
         response = await client.get('/v1/projects/', params={'sort_by': sort_by, 'sort_order': sort_order})
 
         body = jq(response)
-        received_fields = body(f'.result[].{sort_by}').all()
+        received_values = body(f'.result[].{sort_by}').all()
         received_total = body('.total').first()
 
-        assert received_fields == expected_fields
+        assert received_values == expected_values
         assert received_total == 3
 
     @pytest.mark.parametrize('parameter', ['name', 'code', 'description'])

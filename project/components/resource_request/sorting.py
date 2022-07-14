@@ -13,21 +13,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from sqlalchemy.future import select
-from sqlalchemy.orm import contains_eager
 from sqlalchemy.sql import Select
 
-from project.components.crud import CRUD
 from project.components.project.models import Project
 from project.components.resource_request.models import ResourceRequest
+from project.components.sorting import Sorting
 
 
-class ResourceRequestCRUD(CRUD):
-    """CRUD for managing resource request database models."""
+class ResourceRequestSorting(Sorting):
+    """Resource request sorting control parameters."""
 
-    model = ResourceRequest
+    def apply(self, statement: Select, model: ResourceRequest) -> Select:
+        """Return statement with applied ordering.
 
-    @property
-    def select_query(self) -> Select:
-        """Return base select including join with Project model."""
-        return select(self.model).join(Project).options(contains_eager(self.model.project))
+        This is necessary to allow sorting by fields from the relationship model.
+        """
+        try:
+            _, relationship_field = self.field.split('.', 1)
+            self.field = relationship_field
+            model = Project
+        except ValueError:
+            pass
+        return super().apply(statement, model)

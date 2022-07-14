@@ -16,6 +16,8 @@
 import pytest
 
 from project.components.exceptions import NotFound
+from project.components.resource_request.parameters import ResourceRequestSortByFields
+from project.components.sorting import SortingOrder
 
 
 class TestResourceRequestViews:
@@ -105,6 +107,29 @@ class TestResourceRequestViews:
 
         with pytest.raises(NotFound):
             await resource_request_crud.retrieve_by_id(created_resource_request.id)
+
+    @pytest.mark.parametrize('sort_by', ResourceRequestSortByFields.values())
+    @pytest.mark.parametrize('sort_order', SortingOrder.values())
+    async def test_list_resource_request_returns_results_sorted_by_field_with_proper_order(
+        self, sort_by, sort_order, client, jq, project_factory, resource_request_factory
+    ):
+        created_project = await project_factory.create()
+        created_resource_requests = await resource_request_factory.bulk_create(3, project_id=created_project.id)
+        field_values = created_resource_requests.get_field_values(sort_by)
+        if sort_by in ['requested_at', 'completed_at']:
+            field_values = [key.isoformat() for key in field_values]
+        if sort_by == 'project_id':
+            field_values = [str(key) for key in field_values]
+        expected_values = sorted(field_values, reverse=sort_order == SortingOrder.DESC)
+
+        response = await client.get('/v1/resource-requests/', params={'sort_by': sort_by, 'sort_order': sort_order})
+
+        body = jq(response)
+        received_values = body(f'.result[].{sort_by}').all()
+        received_total = body('.total').first()
+
+        assert received_values == expected_values
+        assert received_total == 3
 
     async def test_create_resource_request_returns_conflict_when_resource_from_same_user_to_same_project_exists(
         self, client, project_factory, resource_request_factory
