@@ -2,7 +2,7 @@ name: Build and Publish
 
 on:
   workflow_run:
-    workflows: ["ci"]
+    workflows: ["test"]
     branches: [ develop ]
     types:
       - completed
