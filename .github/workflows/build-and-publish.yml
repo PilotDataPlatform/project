@@ -35,7 +35,7 @@ jobs:
             ghcr.io/pilotdataplatform/project
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=sha,enable=true,prefix="project-",suffix=,format=short
+            type=sha,enable=true,prefix=project-,suffix=,format=short
       - name: Image digest
         run: echo ${{ steps.meta.outputs.tags }}
       - name: Build image and push to GitHub Container Registry
@@ -58,7 +58,7 @@ jobs:
             ghcr.io/pilotdataplatform/project
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=sha,enable=true,prefix="alembic-",suffix=,format=short
+            type=sha,enable=true,prefix=alembic-,suffix=,format=short
       - name: Second image digest
         run: echo ${{ steps.meta-second.outputs.tags }}
       - name: Build second image and push to GitHub Container Registry
