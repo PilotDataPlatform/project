@@ -49,26 +49,26 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           # Sets the target stage to build
           target: project-image
-      # - name: Docker metadata second target
-      #   id: meta-second
-      #   uses: docker/metadata-action@v4
-      #   with:
-      #     # list of Docker images to use as base name for tags
-      #     images: |
-      #       ghcr.io/pilotdataplatform/project
-      #     # generate Docker tags based on the following events/attributes
-      #     tags: |
-      #       type=sha,enable=true,prefix="alembic-",suffix=,format=short
-      # - name: Image digest
-      #   run: echo ${{ steps.meta-second.outputs.tags }}
-      # - name: Build image second and push to GitHub Container Registry
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     # relative path to the place where source code with Dockerfile is located
-      #     context: .
-      #     # Note: tags has to be all lower-case
-      #     tags: ${{ steps.meta-second.outputs.tags }}
-      #     # build on feature branches, push only on main branch
-      #     push: ${{ github.event_name != 'pull_request' }}
-      #     # Sets the target stage to build
-      #     target: alembic-image
+      - name: Docker metadata second target
+        id: meta-second
+        uses: docker/metadata-action@v4
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ghcr.io/pilotdataplatform/project
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=sha,enable=true,prefix="alembic-",suffix=,format=short
+      - name: Second image digest
+        run: echo ${{ steps.meta-second.outputs.tags }}
+      - name: Build second image and push to GitHub Container Registry
+        uses: docker/build-push-action@v2
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: .
+          # Note: tags has to be all lower-case
+          tags: ${{ steps.meta-second.outputs.tags }}
+          # build on feature branches, push only on main branch
+          push: ${{ github.event_name != 'pull_request' }}
+          # Sets the target stage to build
+          target: alembic-image
